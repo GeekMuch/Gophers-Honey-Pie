@@ -1,23 +1,28 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api/setup"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 
 	"gopkg.in/yaml.v3"
 )
 
+type SetService struct {
+	DeviceID uint32 `json:"device_id"`
+}
 type Record struct {
-	Hostname string `yaml:"SomeRandomHostname"`
-	DevideID uint32 `yaml:"DeviceID"`
+	Hostname string `yaml:"Hostname"`
+	DeviceID uint32 `yaml:"DeviceID"`
 }
 
 type Services struct {
-	SSH bool `yaml:"SSH"`
-	FTP bool `yaml:"FTP"`
+	SSH    bool `yaml:"SSH"`
+	FTP    bool `yaml:"FTP"`
+	RDP    bool `yaml:"RDP"`
+	SMB    bool `yaml:"SMB"`
+	TELNET bool `yaml:"TELNET"`
 }
 
 type Config struct {
@@ -25,47 +30,62 @@ type Config struct {
 	Services Services `yaml:"Services"`
 }
 
-func CreateConfigFile() {
+func CreateConfigFile(hostname string) {
 
-	log.Logger.Info().Msgf("[*]\tConfiguring")
+	log.Logger.Info().Msgf("[*]\tConfiguring..")
 
-	devideID := setup.Api_call_addDevice()
-	config := Config{Record: Record{Hostname: "ChangedToSomething", DevideID: devideID}, Services: Services{SSH: false, FTP: false}}
+	deviceID := api.Api_call_addDevice(hostname)
+	config := Config{
+		Record: Record{
+			Hostname: "ChangedToSomething",
+			DeviceID: deviceID},
+		Services: Services{
+			SSH:    false,
+			FTP:    false,
+			RDP:    false,
+			SMB:    false,
+			TELNET: false}}
+
 	data, err := yaml.Marshal(&config)
 
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
-	err2 := ioutil.WriteFile("config.yaml", data, 0644)
+	err2 := ioutil.WriteFile("pkg/config/config.yaml", data, 0644)
 
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
 	log.Logger.Info().Msgf("[+]\tConfiguring [DONE]")
-	ReadConfigFile()
+
 }
 
 func ReadConfigFile() {
 
-	yfile, err := ioutil.ReadFile("config.yaml")
+	yfile, err := ioutil.ReadFile("pkg/config/config.yaml")
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
 
-	data := make(map[string]Services)
-	err2 := yaml.Unmarshal(yfile, &data)
+	settings := make(map[string]Record)
+	err2 := yaml.Unmarshal(yfile, &settings)
 	if err2 != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err)
+		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
 
-	data2 := make(map[uint32]Services)
-	err3 := yaml.Unmarshal(yfile, &data2)
+	services := make(map[string]Services)
+	err3 := yaml.Unmarshal(yfile, &services)
 	if err3 != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err)
+		log.Logger.Error().Msgf("[X]\tError - ", err3)
 	}
 
-	for k, v := range data {
-		fmt.Printf("%s: %t \n", k, v)
-	}
-	log.Logger.Info().Msgf("[*]\tDeviceID -> %d", err3)
+	log.Logger.Info().Msgf("[*]Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+		services["Services"].SSH,
+		services["Services"].FTP,
+		services["Services"].RDP,
+		services["Services"].SMB,
+		services["Services"].TELNET)
+	log.Logger.Info().Msgf("[*]Settings: \n\t\tHostname:\t%v \n\t\tDeviceID:\t%v",
+		settings["Settings"].Hostname,
+		settings["Settings"].DeviceID)
 }
