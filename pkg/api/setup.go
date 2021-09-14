@@ -11,9 +11,15 @@ import (
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
+type SendStruct struct {
+	IpStr      string `json:"ip_str,omitempty"`
+	Configured bool   `json:"configured"`
+}
+
 // Create struct to recive JSON format
 type responseStruct struct {
-	DeviceID uint32 `json:"device_id"`
+	DeviceID   uint32 `json:"device_id"`
+	Configured bool   `json:"configured"`
 }
 
 /*
@@ -90,13 +96,20 @@ func getURLForC2Server(hostname string) string {
 func Api_call_addDevice(hostname string) uint32 {
 
 	ipAddr := get_ip().String()
+	// conf := true
 	// Create a Bearer string by appending string access token
 	var bearer = "Bearer " + "XxPFUhQ8R7kKhpgubt7v"
 
-	//Encode the data
+	// Encode the data
 	postBody, _ := json.Marshal(map[string]string{
 		"ip_str": ipAddr,
 	})
+	// sendit := &SendStruct{
+	// 	IpStr:      ipAddr,
+	// 	Configured: conf,
+	// }
+	// postBody, _ := json.Marshal(sendit)
+
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
@@ -113,7 +126,6 @@ func Api_call_addDevice(hostname string) uint32 {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -", err)
-
 	}
 
 	var respStruct responseStruct

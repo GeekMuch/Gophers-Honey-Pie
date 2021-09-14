@@ -30,21 +30,13 @@ type Config struct {
 	Services Services `yaml:"Services"`
 }
 
-func CreateConfigFile(hostname string) {
+func AddDeviceToConfiguration(hostname string) {
 
 	log.Logger.Info().Msgf("[*]\tConfiguring..")
 
 	deviceID := api.Api_call_addDevice(hostname)
 	config := Config{
-		Record: Record{
-			Hostname: "ChangedToSomething",
-			DeviceID: deviceID},
-		Services: Services{
-			SSH:    false,
-			FTP:    false,
-			RDP:    false,
-			SMB:    false,
-			TELNET: false}}
+		Record: Record{Hostname: hostname, DeviceID: deviceID}}
 
 	data, err := yaml.Marshal(&config)
 
@@ -56,7 +48,7 @@ func CreateConfigFile(hostname string) {
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
-	log.Logger.Info().Msgf("[+]\tConfiguring [DONE]")
+	log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
 
 }
 
@@ -88,4 +80,26 @@ func ReadConfigFile() {
 	log.Logger.Info().Msgf("[*]Settings: \n\t\tHostname:\t%v \n\t\tDeviceID:\t%v",
 		settings["Settings"].Hostname,
 		settings["Settings"].DeviceID)
+}
+
+func CheckIfDeviceIDExits(hostname string) {
+	yfile, err := ioutil.ReadFile("pkg/config/config.yaml")
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tError - ", err)
+	}
+
+	settings := make(map[string]Record)
+	err2 := yaml.Unmarshal(yfile, &settings)
+	if err2 != nil {
+		log.Logger.Error().Msgf("[X]\tError - ", err2)
+	}
+	if settings["Settings"].DeviceID == 0 {
+		AddDeviceToConfiguration(hostname)
+	}
+	ReadConfigFile()
+}
+
+func StartSetupSequence(hostname string) {
+	api.CheckForInternet()
+	CheckIfDeviceIDExits(hostname)
 }

@@ -1,10 +1,9 @@
 Settings:
-    Hostname: ChangedToSomething
-    DeviceID: 1709300220
+    Hostname: 127.0.0.1
+    DeviceID: 63081251
 Services:
-    SSH:    false
-    FTP:    false
-    RDP:    false
-    SMB:    false
+    SSH: false
+    FTP: false
+    RDP: false
+    SMB: false
     TELNET: false
-
