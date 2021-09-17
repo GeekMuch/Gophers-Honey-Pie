@@ -1,0 +1,12 @@
+[Unit]
+Description=Starts setupup in GO
+After=multi-user.target
+ 
+[Service]
+Type=simple
+ExecStart=/usr/bin/go run /home/pi/Gophers-Honey-Pie/main.go
+Restart=always
+RestartSec=5 
+
+[Install]
+WantedBy=multi-user.target
