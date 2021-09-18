@@ -1,6 +1,6 @@
 Settings:
-    Hostname: 127.0.0.1
-    DeviceID: 63081251
+    Hostname: 10.0.0.51
+    DeviceID: 856085714
 Services:
     SSH: false
     FTP: false

@@ -30,20 +30,20 @@ type Config struct {
 	Services Services `yaml:"Services"`
 }
 
-func AddDeviceToConfiguration(hostname string) {
+func AddDeviceIDtoYAML(hostname string) {
+	dID := api.GetDeviceID(hostname)
 
-	log.Logger.Info().Msgf("[*]\tConfiguring..")
+	log.Logger.Info().Msgf("[*]\tAdding Device ID to YAML")
 
-	deviceID := api.Api_call_addDevice(hostname)
 	config := Config{
-		Record: Record{Hostname: hostname, DeviceID: deviceID}}
+		Record: Record{Hostname: hostname, DeviceID: dID}}
 
 	data, err := yaml.Marshal(&config)
 
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
-	err2 := ioutil.WriteFile("pkg/config/config.yaml", data, 0644)
+	err2 := ioutil.WriteFile(api.ConfPath, []byte(data), 0755)
 
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
@@ -54,7 +54,7 @@ func AddDeviceToConfiguration(hostname string) {
 
 func ReadConfigFile() {
 
-	yfile, err := ioutil.ReadFile("pkg/config/config.yaml")
+	yfile, err := ioutil.ReadFile(api.ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
@@ -71,19 +71,19 @@ func ReadConfigFile() {
 		log.Logger.Error().Msgf("[X]\tError - ", err3)
 	}
 
+	log.Logger.Info().Msgf("[*]Settings: \n\t\tHostname:\t%v \n\t\tDeviceID:\t%v",
+		settings["Settings"].Hostname,
+		settings["Settings"].DeviceID)
 	log.Logger.Info().Msgf("[*]Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
 		services["Services"].SSH,
 		services["Services"].FTP,
 		services["Services"].RDP,
 		services["Services"].SMB,
 		services["Services"].TELNET)
-	log.Logger.Info().Msgf("[*]Settings: \n\t\tHostname:\t%v \n\t\tDeviceID:\t%v",
-		settings["Settings"].Hostname,
-		settings["Settings"].DeviceID)
 }
 
 func CheckIfDeviceIDExits(hostname string) {
-	yfile, err := ioutil.ReadFile("pkg/config/config.yaml")
+	yfile, err := ioutil.ReadFile(api.ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
@@ -94,12 +94,8 @@ func CheckIfDeviceIDExits(hostname string) {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
 	if settings["Settings"].DeviceID == 0 {
-		AddDeviceToConfiguration(hostname)
+		AddDeviceIDtoYAML(hostname)
+	} else {
+		ReadConfigFile()
 	}
-	ReadConfigFile()
-}
-
-func StartSetupSequence(hostname string) {
-	api.CheckForInternet()
-	CheckIfDeviceIDExits(hostname)
 }

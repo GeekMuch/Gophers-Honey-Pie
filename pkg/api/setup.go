@@ -3,12 +3,14 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os/exec"
 	"time"
 
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	"gopkg.in/yaml.v3"
 )
 
 type SendStruct struct {
@@ -22,14 +24,29 @@ type responseStruct struct {
 	Configured bool   `json:"configured"`
 }
 
+type Record struct {
+	Hostname string `yaml:"Hostname"`
+	DeviceID uint32 `yaml:"DeviceID"`
+}
+
+type Services struct {
+	SSH    bool `yaml:"SSH"`
+	FTP    bool `yaml:"FTP"`
+	RDP    bool `yaml:"RDP"`
+	SMB    bool `yaml:"SMB"`
+	TELNET bool `yaml:"TELNET"`
+}
+
+var ConfPath string = "boot/config.yaml"
+
 /*
 	Get local ip of this RPI
 */
-func get_ip() net.IP {
+func Get_ip() net.IP {
 
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tConnection is down! [ERROR] - ", err)
+		log.Logger.Error().Msgf("[X]\tConnection is down! [ERROR] -  \n", err)
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
@@ -37,10 +54,35 @@ func get_ip() net.IP {
 }
 
 /*
+	Returns URL for add device
+*/
+func GetURLForC2Server(hostname string) string {
+	c2_host := hostname
+	url := "http://" + c2_host + ":8000/api/devices/addDevice"
+	return url
+}
+
+/*
+	Check if C2 is Alive
+*/
+func CheckForC2Server(hostname string) {
+
+	c2_host := hostname
+
+	timeout := 1 * time.Second
+	conn, err := net.DialTimeout("tcp", c2_host+":8000", timeout)
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tSite unreachable, [ERROR] -  \n", err)
+		log.Logger.Fatal()
+	}
+	log.Logger.Info().Msgf("[*]\tC2 is alive on -> %s", conn.LocalAddr().String())
+}
+
+/*
 	Runs update command to update RPI
 */
 func UpdateSystem() {
-	log.Logger.Info().Msg("[+]\tFetching updates!")
+	log.Logger.Warn().Msg("[*]\tFetching updates!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("bash", "-c", "sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y &> /dev/null")
 	// cmd.Stderr = os.Stdout
@@ -48,14 +90,14 @@ func UpdateSystem() {
 	err := cmd.Run()
 	log.Logger.Info().Msgf("[+]\t[DONE] Updating")
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tCommand running failed [ERROR] - ", err)
+		log.Logger.Error().Msgf("[X]\tCommand running failed [ERROR] - \n", err)
 	}
 }
 
 /*
 	Checks if RPI has internet
 */
-func CheckForInternet() {
+func CheckForInternet(hostname string) {
 
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 
@@ -63,40 +105,30 @@ func CheckForInternet() {
 		log.Logger.Error().Msgf("[X]\tConnection is down!")
 	} else {
 		log.Logger.Info().Msgf("[+]\tConnection is up!")
-		log.Logger.Info().Msgf("[*]\tIP is -> %s", get_ip())
-		UpdateSystem()
+		log.Logger.Info().Msgf("[*]\tIP is -> %s", Get_ip())
 		defer conn.Close()
 	}
 }
 
-/*
-	Returns URL
-*/
-func getURLForC2Server(hostname string) string {
+func GetHostnameYAML() string {
 
-	c2_host := hostname
-	url := "http://" + c2_host + ":8000/api/devices/addDevice"
-
-	timeout := 1 * time.Second
-	conn, err := net.DialTimeout("tcp", c2_host+":8000", timeout)
+	yfile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
-		log.Logger.Error().Msgf("[+]\tSite unreachable, [ERROR] -", err)
-		log.Logger.Fatal()
+		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
-	log.Logger.Info().Msgf("[+]\tC2 is alive on -> %s", conn.LocalAddr().String())
 
-	return url
+	settings := make(map[string]Record)
+	err2 := yaml.Unmarshal(yfile, &settings)
+	if err2 != nil {
+		log.Logger.Error().Msgf("[X]\tError - ", err2)
+	}
+	log.Logger.Info().Msgf("[+] Hostname -> %s", settings["Settings"].Hostname)
+	return settings["Settings"].Hostname
 }
 
-/*
-	Makes API call to C&C server
-	Makes a post resquest to API
-	Receives JSON data with DeviceID for RPI
-*/
-func Api_call_addDevice(hostname string) uint32 {
+func GetDeviceID(hostname string) uint32 {
+	ipAddr := Get_ip().String()
 
-	ipAddr := get_ip().String()
-	// conf := true
 	// Create a Bearer string by appending string access token
 	var bearer = "Bearer " + "XxPFUhQ8R7kKhpgubt7v"
 
@@ -104,18 +136,13 @@ func Api_call_addDevice(hostname string) uint32 {
 	postBody, _ := json.Marshal(map[string]string{
 		"ip_str": ipAddr,
 	})
-	// sendit := &SendStruct{
-	// 	IpStr:      ipAddr,
-	// 	Configured: conf,
-	// }
-	// postBody, _ := json.Marshal(sendit)
 
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("POST", getURLForC2Server(hostname), responseBody)
+	req, err := http.NewRequest("POST", GetURLForC2Server(hostname), responseBody)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 
 	}
 	// add authorization header to the req
@@ -125,19 +152,17 @@ func Api_call_addDevice(hostname string) uint32 {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 	}
 
 	var respStruct responseStruct
 
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&respStruct); err != nil {
-		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -", err)
+		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
 	}
-	log.Logger.Info().Msgf("[*]\tNew DeviceID -> %d", respStruct.DeviceID)
+	log.Logger.Info().Msgf("[+]\tNew DeviceID Added-> %d", respStruct.DeviceID)
 	defer resp.Body.Close()
-
-	log.Logger.Info().Msgf("[+]\tDONE")
 
 	return respStruct.DeviceID
 }

@@ -11,7 +11,7 @@ import (
 func main() {
 	log.InitLog(true)
 	// checkForInternet()
-	config.StartSetupSequence("192.168.8.103")
+	config.StartSetupSequence()
 
 	// fmt.Println("\n [+] Server running!")
 	// http.HandleFunc("/", handler)
