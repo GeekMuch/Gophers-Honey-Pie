@@ -3,8 +3,12 @@ Description=Starts setupup in GO
 After=multi-user.target
  
 [Service]
+User=root
+WorkingDirectory=/home/pi/Gophers-Honey-Pie
+Environment=GOPATH=/home/pi/go
+Environment=GO111MODULE=on
 Type=simple
-ExecStart=/usr/bin/go run /home/pi/Gophers-Honey-Pie/main.go
+ExecStart=/usr/local/go/bin/go run main.go
 Restart=always
 RestartSec=5 
 
