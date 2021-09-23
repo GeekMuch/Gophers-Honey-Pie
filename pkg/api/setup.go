@@ -24,17 +24,19 @@ type responseStruct struct {
 	Configured bool   `json:"configured"`
 }
 
-type Record struct {
-	Hostname string `yaml:"Hostname"`
-	DeviceID uint32 `yaml:"DeviceID"`
+type Settiongs struct {
+	Hostname  string `yaml:"Hostname"`
+	Port      int    `yaml:"port"`
+	DeviceID  uint32 `yaml:"DeviceID"`
+	DeviceKey string `yaml:"DeviceKey"`
 }
 
 type Services struct {
-	SSH    bool `yaml:"SSH"`
-	FTP    bool `yaml:"FTP"`
-	RDP    bool `yaml:"RDP"`
-	SMB    bool `yaml:"SMB"`
-	TELNET bool `yaml:"TELNET"`
+	SSH    bool `yaml:"SSH" json:"SSH"`
+	FTP    bool `yaml:"FTP" json:"FTP"`
+	RDP    bool `yaml:"RDP" json:"RDP"`
+	SMB    bool `yaml:"SMB" json:"SMB"`
+	TELNET bool `yaml:"TELNET" json:"TELNET"`
 }
 
 var ConfPath string = "boot/config.yaml"
@@ -117,7 +119,7 @@ func GetHostnameYAML() string {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
 
-	settings := make(map[string]Record)
+	settings := make(map[string]Settiongs)
 	err2 := yaml.Unmarshal(yfile, &settings)
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)

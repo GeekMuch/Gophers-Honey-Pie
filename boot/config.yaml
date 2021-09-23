@@ -1,6 +1,8 @@
 Settings:
     Hostname: 10.0.0.51
-    DeviceID: 856085714
+    port: 0
+    DeviceID: 702686087
+    DeviceKey: ""
 Services:
     SSH: false
     FTP: false

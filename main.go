@@ -10,11 +10,5 @@ import (
 */
 func main() {
 	log.InitLog(true)
-	// checkForInternet()
 	config.StartSetupSequence()
-
-	// fmt.Println("\n [+] Server running!")
-	// http.HandleFunc("/", handler)
-	// log.Fatal(http.ListenAndServe(":8080", nil))
-
 }
