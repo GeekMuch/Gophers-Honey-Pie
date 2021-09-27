@@ -6,16 +6,18 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
+
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 
 	"gopkg.in/yaml.v3"
 )
 
-type DeviceAuth struct {
-	DeviceId  uint32 `json:"device_id,omitempty"`
-	DeviceKey string `json:"device_key,omitempty"`
-}
+// type DeviceAuth struct {
+// 	DeviceId  uint32 `json:"device_id,omitempty"`
+// 	DeviceKey string `json:"device_key,omitempty"`
+// }
 
 type SetService struct {
 	DeviceID uint32 `json:"device_id"`
@@ -36,16 +38,16 @@ type Services struct {
 	TELNET bool `yaml:"TELNET" json:"TELNET"`
 }
 
-type Config struct {
+type Configuration struct {
 	Settings Settings `yaml:"Settings"`
-	Services Services `yaml:"Services"`
+	Services Services `yaml:"Services" json:"services"`
 }
 
 func getConfFromBackend(hostname string, deviceID uint32) {
 	// Create a Bearer string by appending string access token
 	var bearer = "Bearer " + "XxPFUhQ8R7kKhpgubt7v"
 
-	sendStruct := &DeviceAuth{
+	sendStruct := &model.DeviceAuth{
 		DeviceId:  deviceID,
 		DeviceKey: "XxPFUhQ8R7kKhpgubt7v"}
 
@@ -68,10 +70,10 @@ func getConfFromBackend(hostname string, deviceID uint32) {
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 	}
-	respStruct := &Services{}
+
+	var respStruct model.PiConfResponse
 
 	decoder := json.NewDecoder(resp.Body)
-	log.Logger.Error().Msgf("\n Test %v \n", decoder.Decode(respStruct))
 
 	if err := decoder.Decode(&respStruct); err != nil {
 		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
@@ -85,10 +87,10 @@ func AddDeviceIDtoYAML(hostname string) {
 
 	log.Logger.Info().Msgf("[*]\tAdding Device ID to YAML")
 
-	config := Config{
-		Settings: Settings{Hostname: hostname, DeviceID: dID}}
+	Configuration := model.Device{
+		DeviceID: dID}
 
-	data, err := yaml.Marshal(&config)
+	data, err := yaml.Marshal(&Configuration)
 
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)

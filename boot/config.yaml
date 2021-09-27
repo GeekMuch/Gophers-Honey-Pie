@@ -1,11 +1,23 @@
-Settings:
-    Hostname: 10.0.0.51
-    port: 0
-    DeviceID: 702686087
-    DeviceKey: ""
-Services:
-    SSH: false
-    FTP: false
-    RDP: false
-    SMB: false
-    TELNET: false
+guid:
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+deviceid: 4065204043
+ip: 0
+ipstr: ""
+configured: false
+services:
+    ssh: false
+    ftp: false
+    telnet: false
+    rdp: false
+    smb: false
