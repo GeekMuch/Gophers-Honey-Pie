@@ -1,20 +1,7 @@
-guid:
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
-deviceid: 4065204043
-ip: 0
-ipstr: ""
-configured: false
+hostname: 192.168.8.100
+port: 0
+device_id: 
+device_key: ""
 services:
     ssh: false
     ftp: false

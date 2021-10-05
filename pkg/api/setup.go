@@ -9,37 +9,10 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"gopkg.in/yaml.v3"
 )
-
-type SendStruct struct {
-	IpStr      string `json:"ip_str,omitempty"`
-	Configured bool   `json:"configured"`
-}
-
-// Create struct to recive JSON format
-type responseStruct struct {
-	DeviceID   uint32 `json:"device_id"`
-	Configured bool   `json:"configured"`
-}
-
-type Settiongs struct {
-	Hostname  string `yaml:"Hostname"`
-	Port      int    `yaml:"port"`
-	DeviceID  uint32 `yaml:"DeviceID"`
-	DeviceKey string `yaml:"DeviceKey"`
-}
-
-type Services struct {
-	SSH    bool `yaml:"SSH" json:"SSH"`
-	FTP    bool `yaml:"FTP" json:"FTP"`
-	RDP    bool `yaml:"RDP" json:"RDP"`
-	SMB    bool `yaml:"SMB" json:"SMB"`
-	TELNET bool `yaml:"TELNET" json:"TELNET"`
-}
-
-var ConfPath string = "boot/config.yaml"
 
 /*
 	Get local ip of this RPI
@@ -69,7 +42,8 @@ func GetURLForC2Server(hostname string) string {
 */
 func CheckForC2Server(hostname string) {
 
-	c2_host := hostname
+	c2_host := config.Config.HostName
+	log.Logger.Info().Msgf("[*]\tChecking if C2 with hostname is Alive -> %s", c2_host)
 
 	timeout := 1 * time.Second
 	conn, err := net.DialTimeout("tcp", c2_host+":8000", timeout)
@@ -99,7 +73,7 @@ func UpdateSystem() {
 /*
 	Checks if RPI has internet
 */
-func CheckForInternet(hostname string) {
+func CheckForInternet() {
 
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 
@@ -112,23 +86,21 @@ func CheckForInternet(hostname string) {
 	}
 }
 
-func GetHostnameYAML() string {
+func GetConfigYAML() {
 
-	yfile, err := ioutil.ReadFile(ConfPath)
+	yfile, err := ioutil.ReadFile(config.ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
 
-	settings := make(map[string]Settiongs)
-	err2 := yaml.Unmarshal(yfile, &settings)
+	err2 := yaml.Unmarshal(yfile, config.Config)
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
-	log.Logger.Info().Msgf("[+] Hostname -> %s", settings["Settings"].Hostname)
-	return settings["Settings"].Hostname
+	log.Logger.Info().Msgf("[+] Hostname -> %s", &config.Config.HostName)
 }
 
-func GetDeviceID(hostname string) uint32 {
+func GetDeviceID(hostname string) {
 	ipAddr := Get_ip().String()
 
 	// Create a Bearer string by appending string access token
@@ -142,7 +114,7 @@ func GetDeviceID(hostname string) uint32 {
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("POST", GetURLForC2Server(hostname), responseBody)
+	req, err := http.NewRequest("POST", GetURLForC2Server(config.Config.HostName), responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 
@@ -157,14 +129,11 @@ func GetDeviceID(hostname string) uint32 {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 	}
 
-	var respStruct responseStruct
-
 	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&respStruct); err != nil {
+	if err := decoder.Decode(&config.Config); err != nil {
 		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
 	}
-	log.Logger.Info().Msgf("[+]\tNew DeviceID Added-> %d", respStruct.DeviceID)
+	log.Logger.Info().Msgf("[+]\tNew DeviceID Added-> %d", config.Config.DeviceID)
 	defer resp.Body.Close()
 
-	return respStruct.DeviceID
 }

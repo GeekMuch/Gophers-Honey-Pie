@@ -8,27 +8,13 @@ import (
 
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 
 	"gopkg.in/yaml.v3"
 )
 
-// type DeviceAuth struct {
-// 	DeviceId  uint32 `json:"device_id,omitempty"`
-// 	DeviceKey string `json:"device_key,omitempty"`
-// }
-
-type SetService struct {
-	DeviceID uint32 `json:"device_id"`
-}
-
-type Settings struct {
-	Hostname  string `yaml:"Hostname"`
-	Port      int    `yaml:"port"`
-	DeviceID  uint32 `yaml:"DeviceID"`
-	DeviceKey string `yaml:"DeviceKey"`
-}
+var Config *model.PiConf
+var ConfPath string = "boot/config.yaml"
 
 type Services struct {
 	SSH    bool `yaml:"SSH" json:"SSH"`
@@ -36,11 +22,6 @@ type Services struct {
 	RDP    bool `yaml:"RDP" json:"RDP"`
 	SMB    bool `yaml:"SMB" json:"SMB"`
 	TELNET bool `yaml:"TELNET" json:"TELNET"`
-}
-
-type Configuration struct {
-	Settings Settings `yaml:"Settings"`
-	Services Services `yaml:"Services" json:"services"`
 }
 
 func getConfFromBackend(hostname string, deviceID uint32) {
@@ -82,12 +63,12 @@ func getConfFromBackend(hostname string, deviceID uint32) {
 	defer resp.Body.Close()
 }
 
-func AddDeviceIDtoYAML(hostname string) {
-	dID := api.GetDeviceID(hostname)
+func AddDeviceIDtoYAML() {
+	dID := Config.DeviceID
 
 	log.Logger.Info().Msgf("[*]\tAdding Device ID to YAML")
 
-	Configuration := model.Device{
+	Configuration := model.PiConf{
 		DeviceID: dID}
 
 	data, err := yaml.Marshal(&Configuration)
@@ -95,7 +76,7 @@ func AddDeviceIDtoYAML(hostname string) {
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
-	err2 := ioutil.WriteFile(api.ConfPath, []byte(data), 0755)
+	err2 := ioutil.WriteFile(ConfPath, []byte(data), 0755)
 
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
@@ -106,51 +87,47 @@ func AddDeviceIDtoYAML(hostname string) {
 
 func ReadConfigFile() {
 
-	yfile, err := ioutil.ReadFile(api.ConfPath)
+	yfile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
 
-	settings := make(map[string]Settings)
+	// settings := make(map[string]model.PiConf)
+	settings := model.PiConf{}
 	err2 := yaml.Unmarshal(yfile, &settings)
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
-	}
-
-	services := make(map[string]Services)
-	err3 := yaml.Unmarshal(yfile, &services)
-	if err3 != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err3)
 	}
 
 	log.Logger.Info().Msgf("[*]Settings: \n\t\tHostname:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
-		settings["Settings"].Hostname,
-		settings["Settings"].Port,
-		settings["Settings"].DeviceID,
-		settings["Settings"].DeviceKey)
+		settings.HostName,
+		settings.Port,
+		settings.DeviceID,
+		settings.DeviceKey)
 	log.Logger.Info().Msgf("[*]Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
-		services["Services"].SSH,
-		services["Services"].FTP,
-		services["Services"].RDP,
-		services["Services"].SMB,
-		services["Services"].TELNET)
+		settings.Services.SSH,
+		settings.Services.FTP,
+		settings.Services.RDP,
+		settings.Services.SMB,
+		settings.Services.TELNET)
 }
 
-func CheckIfDeviceIDExits(hostname string) {
-	yfile, err := ioutil.ReadFile(api.ConfPath)
+func CheckIfDeviceIDExits() {
+	hostname := Config.HostName
+	yfile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
 	}
 
-	settings := make(map[string]Settings)
+	settings := model.PiConf{}
 	err2 := yaml.Unmarshal(yfile, &settings)
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
-	if settings["Settings"].DeviceID == 0 {
-		AddDeviceIDtoYAML(hostname)
+	if settings.DeviceID == 0 {
+		AddDeviceIDtoYAML()
 	} else {
 		ReadConfigFile()
-		getConfFromBackend(hostname, settings["Settings"].DeviceID)
+		getConfFromBackend(hostname, settings.DeviceID)
 	}
 }
