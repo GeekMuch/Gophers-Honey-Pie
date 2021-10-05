@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
@@ -10,5 +11,13 @@ import (
 */
 func main() {
 	log.InitLog(true)
-	config.StartSetupSequence()
+	config.ReadConfigFile()
+	if !config.CheckIfDeviceIDExits() {
+		api.GetDeviceIDFromAPI()
+		config.AddDeviceIDtoYAML()
+	}
+
+	// api.GetDeviceIDFromAPI()
+	// config.AddDeviceIDtoYAML()
+	// config.StartSetupSequence()
 }
