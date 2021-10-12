@@ -20,51 +20,58 @@ func getDeviceConfURL() string {
 }
 
 func GetConfFromBackend() {
-	// Create a Bearer string by appending string access token
-	var bearer = helper.AuthenticationToken()
+	for {
 
-	sendStruct := &model.DeviceAuth{
-		DeviceId:  config.Config.DeviceID,
-		DeviceKey: "XxPFUhQ8R7kKhpgubt7v"}
+		// Create a Bearer string by appending string access token
+		var bearer = helper.AuthenticationToken()
 
-	postBody, _ := json.Marshal(sendStruct)
+		sendStruct := &model.DeviceAuth{
+			DeviceId:  config.Config.DeviceID,
+			DeviceKey: "XxPFUhQ8R7kKhpgubt7v"}
 
-	responseBody := bytes.NewBuffer(postBody)
+		postBody, _ := json.Marshal(sendStruct)
 
-	// Create a new request using http
-	req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
-	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		responseBody := bytes.NewBuffer(postBody)
 
+		// Create a new request using http
+		req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
+		if err != nil {
+			log.Logger.Info().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+
+		}
+		// add authorization header to the req
+		req.Header.Add("Authorization", bearer)
+
+		// Send req using http Client
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		}
+
+		var respStruct model.PiConfResponse
+
+		decoder := json.NewDecoder(resp.Body)
+
+		if err := decoder.Decode(&respStruct); err != nil {
+			log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
+		}
+		resp.Body.Close()
+		config.Config.IpStr = helper.GetIP().String()
+		if config.Config.Services != respStruct.Services{
+			config.Config.Services = respStruct.Services
+
+			config.WriteConfToYAML()
+		}
+		log.Logger.Info().Msgf("[*]Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+			config.Config.Services.SSH,
+			config.Config.Services.FTP,
+			config.Config.Services.RDP,
+			config.Config.Services.SMB,
+			config.Config.Services.TELNET)
+
+		time.Sleep(time.Second*10)
 	}
-	// add authorization header to the req
-	req.Header.Add("Authorization", bearer)
-
-	// Send req using http Client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
-	}
-
-	var respStruct model.PiConfResponse
-
-	decoder := json.NewDecoder(resp.Body)
-
-	if err := decoder.Decode(&respStruct); err != nil {
-		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
-	}
-	//log.Logger.Info().Msgf("[+]\t Updated configs -> %v", respStruct)
-	defer resp.Body.Close()
-
-	config.Config.Services = respStruct.Services
-
-	log.Logger.Info().Msgf("[*]Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
-		config.Config.Services.SSH,
-		config.Config.Services.FTP,
-		config.Config.Services.RDP,
-		config.Config.Services.SMB,
-		config.Config.Services.TELNET)
 }
 
 func Heartbeat () {
@@ -94,6 +101,7 @@ func Heartbeat () {
 
 		resp.Body.Close()
 		time.Sleep(time.Second*30)
+		log.Logger.Info().Msgf("[*]\tHeartbeat ->  %v \n", sendStruct)
 	}
 
 }
