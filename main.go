@@ -22,10 +22,8 @@ func main() {
 	}
 	api.GetConfFromBackend()
 	config.WriteConfToYAML()
-	for {
-		go api.Heartbeat()
-
-	}
+	go api.Heartbeat()
+	for {}
 
 
 	// api.GetDeviceIDFromAPI()

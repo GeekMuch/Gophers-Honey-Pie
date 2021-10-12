@@ -67,33 +67,33 @@ func GetConfFromBackend() {
 		config.Config.Services.TELNET)
 }
 
-func Heartbeat () error {
-	var bearer = helper.AuthenticationToken()
+func Heartbeat () {
+	for {
+		var bearer = helper.AuthenticationToken()
 
-	sendStruct := &model.Heartbeat{
-		DeviceID: config.Config.DeviceID,
-		TimeStamp: time.Now()}
+		sendStruct := &model.Heartbeat{
+			DeviceID: config.Config.DeviceID,
+			TimeStamp: time.Now()}
 
-	postBody, _ := json.Marshal(sendStruct)
+		postBody, _ := json.Marshal(sendStruct)
 
-	responseBody := bytes.NewBuffer(postBody)
+		responseBody := bytes.NewBuffer(postBody)
 
-	req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
-	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
+		req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
+		if err != nil {
+			log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
+		}
+
+		req.Header.Add("Authorization", bearer)
+		// Send req using http Client
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		}
+
+		resp.Body.Close()
+		time.Sleep(time.Second*30)
 	}
 
-	req.Header.Add("Authorization", bearer)
-	// Send req using http Client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
-	}
-
-	defer resp.Body.Close()
-
-	time.Sleep(30000)
-
-	return err
 }
