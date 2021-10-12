@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-
+	"time"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -13,8 +13,8 @@ import (
 )
 
 func getDeviceConfURL() string {
-	C2_host := config.Config.C2
-	url := "http://" + C2_host + ":8000/api/devices/getDeviceConf"
+	C2Host := config.Config.C2
+	url := "http://" + C2Host + ":8000/api/devices/getDeviceConf"
 	log.Logger.Info().Msg(url)
 	return url
 }
@@ -65,5 +65,35 @@ func GetConfFromBackend() {
 		config.Config.Services.RDP,
 		config.Config.Services.SMB,
 		config.Config.Services.TELNET)
+}
 
+func Heartbeat () error {
+	var bearer = helper.AuthenticationToken()
+
+	sendStruct := &model.Heartbeat{
+		DeviceID: config.Config.DeviceID,
+		TimeStamp: time.Now()}
+
+	postBody, _ := json.Marshal(sendStruct)
+
+	responseBody := bytes.NewBuffer(postBody)
+
+	req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
+	}
+
+	req.Header.Add("Authorization", bearer)
+	// Send req using http Client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+	}
+
+	defer resp.Body.Close()
+
+	time.Sleep(30000)
+
+	return err
 }

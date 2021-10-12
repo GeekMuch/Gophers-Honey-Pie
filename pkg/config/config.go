@@ -56,7 +56,7 @@ func CheckIfDeviceIDExits() bool {
 	}
 }
 
-func AddDeviceIDtoYAML() {
+func WriteConfToYAML() {
 
 	log.Logger.Info().Msgf("[*]\tAdding Device ID to YAML")
 
