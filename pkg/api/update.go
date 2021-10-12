@@ -6,28 +6,22 @@ import (
 	"net/http"
 
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
 func getDeviceConfURL() string {
-	c2_host := config.Config.c2
-	url := "http://" + c2_host + ":8000/api/devices/getDeviceConf"
+	C2_host := config.Config.C2
+	url := "http://" + C2_host + ":8000/api/devices/getDeviceConf"
 	log.Logger.Info().Msg(url)
 	return url
 }
 
-func authToken() string {
+func GetConfFromBackend() {
 	// Create a Bearer string by appending string access token
-	// TODO: Change token to environment variable
-	var bearer = "Bearer " + "XxPFUhQ8R7kKhpgubt7v"
-	return bearer
-}
-
-func getConfFromBackend() {
-	// Create a Bearer string by appending string access token
-	var bearer = authToken()
+	var bearer = helper.AuthenticationToken()
 
 	sendStruct := &model.DeviceAuth{
 		DeviceId:  config.Config.DeviceID,
@@ -38,7 +32,7 @@ func getConfFromBackend() {
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("GET", "http://"+c2+":8000/api/devices/getDeviceConf", responseBody)
+	req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 
@@ -60,6 +54,16 @@ func getConfFromBackend() {
 	if err := decoder.Decode(&respStruct); err != nil {
 		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
 	}
-	log.Logger.Info().Msgf("[+]\t Added list of serices -> %v", respStruct)
+	//log.Logger.Info().Msgf("[+]\t Updated configs -> %v", respStruct)
 	defer resp.Body.Close()
+
+	config.Config.Services = respStruct.Services
+
+	log.Logger.Info().Msgf("[*]Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+		config.Config.Services.SSH,
+		config.Config.Services.FTP,
+		config.Config.Services.RDP,
+		config.Config.Services.SMB,
+		config.Config.Services.TELNET)
+
 }

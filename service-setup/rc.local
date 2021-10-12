@@ -12,7 +12,7 @@
 # By default this script does nothing.
 
 # Print the IP address
-_IP=$(c2 -I) || true
+_IP=$(C2 -I) || true
 if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 else

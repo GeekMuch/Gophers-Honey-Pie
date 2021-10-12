@@ -30,22 +30,22 @@ func Get_ip() net.IP {
 /*
 	Returns URL for add device
 */
-func GetURLForC2Server(c2 string) string {
-	c2_host := c2
-	url := "http://" + c2_host + ":8000/api/devices/addDevice"
+func GetURLForC2Server(C2 string) string {
+	C2_host := C2
+	url := "http://" + C2_host + ":8000/api/devices/addDevice"
 	return url
 }
 
 /*
 	Check if C2 is Alive
 */
-func CheckForC2Server(c2 string) {
+func CheckForC2Server(C2 string) {
 
-	c2_host := config.Config.c2
-	log.Logger.Info().Msgf("[*]\tChecking if C2 with c2 is Alive -> %s", c2_host)
+	C2_host := config.Config.C2
+	log.Logger.Info().Msgf("[*]\tChecking if C2 with C2 is Alive -> %s", C2_host)
 
 	timeout := 1 * time.Second
-	conn, err := net.DialTimeout("tcp", c2_host+":8000", timeout)
+	conn, err := net.DialTimeout("tcp", C2_host+":8000", timeout)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tSite unreachable, [ERROR] -  \n", err)
 		log.Logger.Fatal()
@@ -96,10 +96,10 @@ func GetConfigYAML() {
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
-	log.Logger.Info().Msgf("[+] c2 -> %s", &config.Config.c2)
+	log.Logger.Info().Msgf("[+] C2 -> %s", &config.Config.C2)
 }
 
-func GetDeviceID(c2 string) {
+func GetDeviceID(C2 string) {
 	ipAddr := Get_ip().String()
 
 	// Create a Bearer string by appending string access token
@@ -113,7 +113,7 @@ func GetDeviceID(c2 string) {
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("POST", GetURLForC2Server(config.Config.c2), responseBody)
+	req, err := http.NewRequest("POST", GetURLForC2Server(config.Config.C2), responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 

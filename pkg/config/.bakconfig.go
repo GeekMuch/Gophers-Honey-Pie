@@ -24,7 +24,7 @@ type Services struct {
 	TELNET bool `yaml:"TELNET" json:"TELNET"`
 }
 
-func getConfFromBackend(c2 string, deviceID uint32) {
+func getConfFromBackend(C2 string, deviceID uint32) {
 	// Create a Bearer string by appending string access token
 	var bearer = "Bearer " + "XxPFUhQ8R7kKhpgubt7v"
 
@@ -37,7 +37,7 @@ func getConfFromBackend(c2 string, deviceID uint32) {
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("GET", "http://"+c2+":8000/api/devices/getDeviceConf", responseBody)
+	req, err := http.NewRequest("GET", "http://"+C2+":8000/api/devices/getDeviceConf", responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 
@@ -99,8 +99,8 @@ func ReadConfigFile() {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
 
-	log.Logger.Info().Msgf("[*]Settings: \n\t\tc2:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
-		settings.c2,
+	log.Logger.Info().Msgf("[*]Settings: \n\t\tC2:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
+		settings.C2,
 		settings.Port,
 		settings.DeviceID,
 		settings.DeviceKey)
@@ -113,7 +113,7 @@ func ReadConfigFile() {
 }
 
 func CheckIfDeviceIDExits() {
-	c2 := Config.c2
+	C2 := Config.C2
 	yfile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err)
@@ -128,6 +128,6 @@ func CheckIfDeviceIDExits() {
 		AddDeviceIDtoYAML()
 	} else {
 		ReadConfigFile()
-		getConfFromBackend(c2, settings.DeviceID)
+		getConfFromBackend(C2, settings.DeviceID)
 	}
 }
