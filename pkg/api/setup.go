@@ -14,7 +14,7 @@ import (
 	Returns URL for add device
 */
 func getAddDeviceURL() string {
-	c2_host := config.Config.HostName
+	c2_host := config.Config.c2
 	url := "http://" + c2_host + ":8000/api/devices/addDevice"
 	log.Logger.Info().Msg(url)
 	return url

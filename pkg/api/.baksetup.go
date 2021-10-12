@@ -18,7 +18,6 @@ import (
 	Get local ip of this RPI
 */
 func Get_ip() net.IP {
-
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tConnection is down! [ERROR] -  \n", err)
@@ -31,8 +30,8 @@ func Get_ip() net.IP {
 /*
 	Returns URL for add device
 */
-func GetURLForC2Server(hostname string) string {
-	c2_host := hostname
+func GetURLForC2Server(c2 string) string {
+	c2_host := c2
 	url := "http://" + c2_host + ":8000/api/devices/addDevice"
 	return url
 }
@@ -40,10 +39,10 @@ func GetURLForC2Server(hostname string) string {
 /*
 	Check if C2 is Alive
 */
-func CheckForC2Server(hostname string) {
+func CheckForC2Server(c2 string) {
 
-	c2_host := config.Config.HostName
-	log.Logger.Info().Msgf("[*]\tChecking if C2 with hostname is Alive -> %s", c2_host)
+	c2_host := config.Config.c2
+	log.Logger.Info().Msgf("[*]\tChecking if C2 with c2 is Alive -> %s", c2_host)
 
 	timeout := 1 * time.Second
 	conn, err := net.DialTimeout("tcp", c2_host+":8000", timeout)
@@ -97,10 +96,10 @@ func GetConfigYAML() {
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
-	log.Logger.Info().Msgf("[+] Hostname -> %s", &config.Config.HostName)
+	log.Logger.Info().Msgf("[+] c2 -> %s", &config.Config.c2)
 }
 
-func GetDeviceID(hostname string) {
+func GetDeviceID(c2 string) {
 	ipAddr := Get_ip().String()
 
 	// Create a Bearer string by appending string access token
@@ -114,7 +113,7 @@ func GetDeviceID(hostname string) {
 	responseBody := bytes.NewBuffer(postBody)
 
 	// Create a new request using http
-	req, err := http.NewRequest("POST", GetURLForC2Server(config.Config.HostName), responseBody)
+	req, err := http.NewRequest("POST", GetURLForC2Server(config.Config.c2), responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 

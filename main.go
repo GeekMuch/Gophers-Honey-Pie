@@ -16,6 +16,7 @@ func main() {
 		api.GetDeviceIDFromAPI()
 		config.AddDeviceIDtoYAML()
 	}
+	
 
 	// api.GetDeviceIDFromAPI()
 	// config.AddDeviceIDtoYAML()

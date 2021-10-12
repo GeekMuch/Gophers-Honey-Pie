@@ -27,8 +27,8 @@ func ReadConfigFile() {
 		log.Logger.Error().Msgf("[X]\tError - ", err2)
 	}
 
-	log.Logger.Info().Msgf("[*]Settings: \n\t\tHostname:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v \n\t\tIPStr:\t%v \n\t\tConfigured:\t%v",
-		conf.HostName,
+	log.Logger.Info().Msgf("[*]Settings: \n\t\tc2:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v \n\t\tIPStr:\t%v \n\t\tConfigured:\t%v",
+		conf.c2,
 		conf.Port,
 		conf.DeviceID,
 		conf.DeviceKey,
