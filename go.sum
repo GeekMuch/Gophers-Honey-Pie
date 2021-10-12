@@ -1,7 +1,5 @@
 4d63.com/gochecknoinits v0.0.0-20200108094044-eb73b47b9fc4/go.mod h1:4o1i5aXtIF5tJFt3UD1knCVmWOXg7fLYdHVu6jeNcnM=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/Mikkelhost/Gophers-Honey v0.0.0-20211012080216-18aefd391eb1 h1:Ndgs+QT1cvT/WjPxamoWvIoeL4gtznOEQEchODnwxNc=
-github.com/Mikkelhost/Gophers-Honey v0.0.0-20211012080216-18aefd391eb1/go.mod h1:UKufFn+EnxG3pio0ZCCAV89+63eHRUPRs7Qw1GNzjaw=
 github.com/Mikkelhost/Gophers-Honey v0.0.0-20211012114300-cb17b11492d1 h1:Kw5FJCwXH/TsvcXBZZ16DMUdTbLT9d9TvWSZhYXMb7U=
 github.com/Mikkelhost/Gophers-Honey v0.0.0-20211012114300-cb17b11492d1/go.mod h1:UKufFn+EnxG3pio0ZCCAV89+63eHRUPRs7Qw1GNzjaw=
 github.com/coreos/go-systemd/v22 v22.3.2/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=

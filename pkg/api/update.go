@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -21,7 +22,6 @@ func getDeviceConfURL() string {
 
 func GetConfFromBackend() {
 	for {
-
 		// Create a Bearer string by appending string access token
 		var bearer = helper.AuthenticationToken()
 
@@ -57,30 +57,32 @@ func GetConfFromBackend() {
 			log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
 		}
 		resp.Body.Close()
-		config.Config.IpStr = helper.GetIP().String()
-		if config.Config.Services != respStruct.Services{
+
+		if config.Config.Services != respStruct.Services {
 			config.Config.Services = respStruct.Services
 
-			config.WriteConfToYAML()
 		}
-		log.Logger.Info().Msgf("[*]Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+
+		config.Config.IpStr = helper.GetIP().String()
+		config.WriteConfToYAML()
+
+		log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
 			config.Config.Services.SSH,
 			config.Config.Services.FTP,
 			config.Config.Services.RDP,
 			config.Config.Services.SMB,
 			config.Config.Services.TELNET)
 
-		time.Sleep(time.Second*10)
+		time.Sleep(time.Second * 10)
 	}
 }
 
-func Heartbeat () {
+func Heartbeat() {
 	for {
 		var bearer = helper.AuthenticationToken()
 
 		sendStruct := &model.Heartbeat{
-			DeviceID: config.Config.DeviceID,
-			TimeStamp: time.Now()}
+			DeviceID: config.Config.DeviceID}
 
 		postBody, _ := json.Marshal(sendStruct)
 
@@ -100,8 +102,8 @@ func Heartbeat () {
 		}
 
 		resp.Body.Close()
-		time.Sleep(time.Second*30)
-		log.Logger.Info().Msgf("[*]\tHeartbeat ->  %v \n", sendStruct)
+		time.Sleep(time.Second * 30)
+		log.Logger.Info().Msgf("[*]\tHeartbeat ->  DeviceID: %v \n", sendStruct.DeviceID)
 	}
 
 }

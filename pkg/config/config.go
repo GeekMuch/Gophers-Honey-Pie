@@ -17,17 +17,17 @@ func ReadConfigFile() {
 
 	yfile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err)
+		log.Logger.Error().Msgf("[X]\tError in reading YAML  - ", err)
 	}
 
 	// settings := make(map[string]model.PiConf)
 	conf := model.PiConf{}
 	err2 := yaml.Unmarshal(yfile, &conf)
 	if err2 != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err2)
+		log.Logger.Error().Msgf("[X]\tError in unmarshal YAML - ", err2)
 	}
 
-	log.Logger.Info().Msgf("[*]Settings: \n\t\tC2:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v \n\t\tIPStr:\t%v \n\t\tConfigured:\t%v",
+	log.Logger.Info().Msgf("[*] Settings: \n\t\tC2:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v \n\t\tIPStr:\t%v \n\t\tConfigured:\t%v",
 		conf.C2,
 		conf.Port,
 		conf.DeviceID,
@@ -35,7 +35,7 @@ func ReadConfigFile() {
 		conf.IpStr,
 		conf.Configured)
 
-	log.Logger.Info().Msgf("[*]Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+	log.Logger.Info().Msgf("[*] Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
 		conf.Services.SSH,
 		conf.Services.FTP,
 		conf.Services.RDP,
@@ -48,27 +48,26 @@ func ReadConfigFile() {
 
 func CheckIfDeviceIDExits() bool {
 	if Config.DeviceID == 0 {
-		log.Logger.Warn().Msg("Device ID not set")
+		log.Logger.Warn().Msg("[!] Device ID not set")
 		return false
 	} else {
-		log.Logger.Info().Msg("Device ID set")
+		log.Logger.Info().Msg("[+] Device ID set")
 		return true
 	}
 }
 
 func WriteConfToYAML() {
 
-	log.Logger.Info().Msgf("[*]\tAdding Device ID to YAML")
+	log.Logger.Info().Msgf("[*]\tAdding configuration to YAML")
 
 	data, err := yaml.Marshal(&Config)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err)
+		log.Logger.Error().Msgf("[X]\tError in YAML Marshal - ", err)
 	}
 
 	err2 := ioutil.WriteFile(ConfPath, []byte(data), 0755)
 	if err2 != nil {
-		log.Logger.Error().Msgf("[X]\tError - ", err2)
+		log.Logger.Error().Msgf("[X]\tError writing to YAML - ", err2)
 	}
-	log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
-	log.Logger.Info().Msgf("Device ID is: %v", Config.DeviceID)
+	log.Logger.Info().Msgf("[!] Device ID is: %v", Config.DeviceID)
 }
