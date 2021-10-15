@@ -13,13 +13,6 @@ import (
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
-func getDeviceConfURL() string {
-	C2Host := config.Config.C2
-	url := "http://" + C2Host + ":8000/api/devices/getDeviceConf"
-	log.Logger.Info().Msg(url)
-	return url
-}
-
 func GetConfFromBackend() {
 	for {
 		// Create a Bearer string by appending string access token

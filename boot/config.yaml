@@ -1,11 +1,11 @@
-c2: 127.0.0.1
-ip_str: 192.168.110.210
+c2: mrbeef.local
+ip_str: 192.168.43.128
 configured: false
-port: 0
-device_id: 2829150445
+port: 8000
+device_id: 1699573738
 device_key: ""
 services:
-    ssh: true
+    ssh: false
     ftp: false
     telnet: false
     rdp: false
