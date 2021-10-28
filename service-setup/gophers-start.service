@@ -8,7 +8,7 @@ WorkingDirectory=/home/pi/Gophers-Honey-Pie
 Environment=GOPATH=/home/pi/go
 Environment=GO111MODULE=on
 Type=simple
-ExecStart=/usr/local/go/bin/go run main.go
+ExecStart=/home/pi/Gophers-Honey-Pie/gophers-start.sh
 Restart=always
 RestartSec=5 
 
