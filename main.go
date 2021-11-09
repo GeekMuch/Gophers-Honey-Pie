@@ -1,9 +1,9 @@
 package main
 
 import (
-	// "github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
-	//"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
-	"github.com/GeekMuch/Gophers-Honey-Pie/honeypot/opencanary"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
+
 	// "github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
@@ -13,7 +13,7 @@ import (
 */
 func main() {
 	log.InitLog(true)
-	// config.ReadConfigFile()
+	config.ReadConfigFile()
 	// helper.CheckForInternet()
 	// // helper.UpdateSystem()
 	// helper.CheckForC2Server(config.Config.C2)
@@ -30,6 +30,7 @@ func main() {
 	// }
 	opencanary.ReadFromToCanaryConfig()
 	opencanary.WriteToCanaryConfigFile()
+	opencanary.Start()
 
 	// api.GetDeviceIDFromAPI()
 	// config.AddDeviceIDtoYAML()
