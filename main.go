@@ -2,7 +2,8 @@ package main
 
 import (
 	// "github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	//"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	"github.com/GeekMuch/Gophers-Honey-Pie/honeypot/opencanary"
 	// "github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
@@ -27,7 +28,8 @@ func main() {
 	// go api.Heartbeat()
 	// for {
 	// }
-	config.ReadFromToCanaryConfig()
+	opencanary.ReadFromToCanaryConfig()
+	opencanary.WriteToCanaryConfigFile()
 
 	// api.GetDeviceIDFromAPI()
 	// config.AddDeviceIDtoYAML()
