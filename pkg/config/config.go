@@ -11,7 +11,7 @@ import (
 )
 
 var Config *model.PiConf
-var ConfPath string = "/boot/config.yml"
+var ConfPath string = "boot/config.yml"
 
 func ReadConfigFile() {
 

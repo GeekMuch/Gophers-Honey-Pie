@@ -53,9 +53,9 @@ func GetConfFromBackend() {
 
 		if config.Config.Services != respStruct.Services {
 			config.Config.Services = respStruct.Services
+			
 
 		}
-
 		config.Config.IpStr = helper.GetIP().String()
 		config.WriteConfToYAML()
 
