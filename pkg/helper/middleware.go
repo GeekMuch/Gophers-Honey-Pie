@@ -22,7 +22,7 @@ func CheckForC2Server(C2 string) {
 	timeout := 1 * time.Second
 	conn, err := net.DialTimeout("tcp", C2Host+":8000", timeout)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\t C2 is unreachable, [ERROR] -  \n", err)
+		log.Logger.Error().Msgf("[X]\tC2 is unreachable, [ERROR] -  \n", err)
 		log.Logger.Fatal()
 	}
 	log.Logger.Info().Msgf("[!]\tC2 is alive on -> %s", conn.LocalAddr().String())

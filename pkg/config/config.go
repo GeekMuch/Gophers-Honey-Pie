@@ -26,21 +26,24 @@ func ReadConfigFile() {
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError in unmarshal YAML - ", err2)
 	}
-
-	log.Logger.Info().Msgf("[*] Settings: \n\t\tC2:\t%v \n\t\tPort:\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v \n\t\tIPStr:\t%v \n\t\tConfigured:\t%v",
+	
+	log.Logger.Info().Msgf("[*] Settings: \n\t\tC2:\t\t%v \n\t\tIPStr:\t\t%v \n\t\tHostname:\t%v \n\t\tMAC:\t%v \n\t\tConfigured:\t%v \n\t\tPort:\t\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
 		conf.C2,
+		conf.IpStr,
+		conf.Hostname,
+		conf.Mac,
+		conf.Configured,
 		conf.Port,
 		conf.DeviceID,
-		conf.DeviceKey,
-		conf.IpStr,
-		conf.Configured)
+		conf.DeviceKey)
 
-	log.Logger.Info().Msgf("[*] Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+	log.Logger.Info().Msgf("[*] Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
 		conf.Services.SSH,
 		conf.Services.FTP,
-		conf.Services.RDP,
-		conf.Services.SMB,
-		conf.Services.TELNET)
+		conf.Services.TELNET,
+		conf.Services.HTTP,
+		conf.Services.HTTPS,
+		conf.Services.SMB)
 
 	Config = &conf
 	// log.Logger.Debug().Msgf("Config: %v", *Config)

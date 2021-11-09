@@ -62,9 +62,11 @@ func GetConfFromBackend() {
 		log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
 			config.Config.Services.SSH,
 			config.Config.Services.FTP,
-			config.Config.Services.RDP,
-			config.Config.Services.SMB,
-			config.Config.Services.TELNET)
+			config.Config.Services.TELNET,
+			config.Config.Services.HTTP,
+			config.Config.Services.HTTPS,
+			config.Config.Services.SMB)
+
 
 		time.Sleep(time.Second * 10)
 	}
