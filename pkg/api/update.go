@@ -51,22 +51,27 @@ func GetConfFromBackend() {
 		}
 		resp.Body.Close()
 
-		if config.Config.Services != respStruct.Services {
-			config.Config.Services = respStruct.Services
-			
-
+		err = config.UpdateConfig(respStruct)
+		if err != nil {
+			log.Logger.Warn().Msgf("Error updating config", err)
 		}
-		config.Config.IpStr = helper.GetIP().String()
-		config.WriteConfToYAML()
-
-		log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
-			config.Config.Services.SSH,
-			config.Config.Services.FTP,
-			config.Config.Services.TELNET,
-			config.Config.Services.HTTP,
-			config.Config.Services.HTTPS,
-			config.Config.Services.SMB)
-
+		//log.Logger.Warn().Msgf("Response: %v", respStruct)
+		log.Logger.Info().Msgf("[*] Updated Services in config file: " +
+			"\n\tHostname: \t%v " +
+			"\n\tNICVendor:\t%v " +
+			"\n\tDeviceID:\t%v " +
+			"\n\tStatus:\t%v " +
+			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
+			respStruct.Hostname,
+			respStruct.NICVendor,
+			respStruct.DeviceId,
+			respStruct.Status,
+			respStruct.Services.SSH,
+			respStruct.Services.FTP,
+			respStruct.Services.TELNET,
+			respStruct.Services.HTTP,
+			respStruct.Services.HTTPS,
+			respStruct.Services.SMB)
 
 		time.Sleep(time.Second * 10)
 	}

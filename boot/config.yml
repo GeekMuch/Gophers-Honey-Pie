@@ -1,12 +1,16 @@
 c2: mrbeef.local
-ip_str: 192.168.43.128
+ip_str: 192.168.8.100
+hostname: ""
+nic_vendor: ""
+mac: ""
 configured: false
 port: 8000
-device_id: 1699573738
+device_id: 3535399484
 device_key: ""
 services:
-    ssh: false
+    ssh: true
     ftp: false
     telnet: false
-    rdp: false
-    smb: false
+    http: false
+    https: false
+    smb: true

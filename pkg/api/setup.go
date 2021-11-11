@@ -30,7 +30,7 @@ func createPostBody() []byte {
 	return postBody
 }
 
-func GetDeviceIDFromAPI() {
+func RegisterDevice() {
 
 	responseBody := bytes.NewBuffer(createPostBody())
 	// Create a new request using http

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	"io/ioutil"
 
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -37,9 +38,9 @@ func ReadConfigFile() {
 		conf.DeviceID,
 		conf.DeviceKey)
 
-	log.Logger.Info().Msgf("[*] Services: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
-		conf.Services.SSH,
+	log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
 		conf.Services.FTP,
+		conf.Services.SSH,
 		conf.Services.TELNET,
 		conf.Services.HTTP,
 		conf.Services.HTTPS,
@@ -73,4 +74,15 @@ func WriteConfToYAML() {
 		log.Logger.Error().Msgf("[X]\tError writing to YAML - ", err2)
 	}
 	log.Logger.Info().Msgf("[!] Device ID is: %v", Config.DeviceID)
+}
+
+func UpdateConfig(conf model.PiConfResponse) error{
+	if Config.Services != conf.Services {
+		Config.Services = conf.Services
+	}
+
+
+	Config.IpStr = helper.GetIP().String()
+	WriteConfToYAML()
+	return nil
 }

