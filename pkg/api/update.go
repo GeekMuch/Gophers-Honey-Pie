@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
@@ -16,7 +15,7 @@ import (
 func GetConfFromBackend() {
 	for {
 		// Create a Bearer string by appending string access token
-		var bearer = helper.AuthenticationToken()
+		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.DeviceAuth{
 			DeviceId:  config.Config.DeviceID,
@@ -79,7 +78,7 @@ func GetConfFromBackend() {
 
 func Heartbeat() {
 	for {
-		var bearer = helper.AuthenticationToken()
+		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.Heartbeat{
 			DeviceID: config.Config.DeviceID}

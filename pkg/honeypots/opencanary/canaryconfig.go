@@ -24,7 +24,7 @@ func ReadFromToCanaryConfig() {
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in reading JSON  - ", err)
 	}
-	log.Logger.Debug().Msgf("ConfFile: %s", jFile)
+	//log.Logger.Debug().Msgf("ConfFile: %s", jFile)
 	err = json.Unmarshal(jFile, &conf)
 	if err != nil {
 		log.Logger.Warn().Msgf("Error decoding json: %s", err)

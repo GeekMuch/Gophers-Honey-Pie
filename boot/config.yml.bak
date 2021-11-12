@@ -1,17 +1,17 @@
 c2: mrbeef.local
-ip_str: 192.168.92.210
-hostname: DuErFlotSmukkeMikkel
-nic_vendor: intel
+ip_str: ""
+hostname: ""
+nic_vendor: ""
 mac: ""
-#Todo Change configured to registered.
 configured: false
 port: 8000
-device_id: 1013264630
+device_id: 0
 device_key: XxPFUhQ8R7kKhpgubt7v
 services:
     ssh: false
-    ftp: true
+    ftp: false
     telnet: false
-    http: true
+    http: false
     https: false
     smb: false
+

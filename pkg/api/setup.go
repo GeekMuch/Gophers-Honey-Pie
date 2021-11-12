@@ -3,10 +3,10 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"net/http"
 
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
@@ -21,7 +21,7 @@ func getAddDeviceURL() string {
 }
 
 func createPostBody() []byte {
-	ipAddr := helper.GetIP().String()
+	ipAddr := config.Config.IpStr
 
 	// Encode the ip_addr to postbody
 	postBody, _ := json.Marshal(map[string]string{
@@ -31,7 +31,6 @@ func createPostBody() []byte {
 }
 
 func RegisterDevice() {
-
 	responseBody := bytes.NewBuffer(createPostBody())
 	// Create a new request using http
 	req, err := http.NewRequest("POST", getAddDeviceURL(), responseBody)
@@ -40,7 +39,7 @@ func RegisterDevice() {
 
 	}
 	// add authorization header to the req
-	req.Header.Add("Authorization", helper.AuthenticationToken())
+	req.Header.Add("Authorization", config.AuthenticationToken())
 
 	// Send req using http Client
 	client := &http.Client{}
@@ -58,6 +57,16 @@ func RegisterDevice() {
 	}
 	log.Logger.Info().Msgf("[+]\tNew DeviceID Added-> %v", deviceId.Id)
 	defer resp.Body.Close()
-	config.Config.DeviceID = deviceId.Id
-	config.Config.IpStr = helper.GetIP().String()
+	conf := model.PiConfResponse{
+		Status:    "",
+		DeviceId:  deviceId.Id,
+		NICVendor: config.Config.NICVendor,
+		Hostname:  config.Config.Hostname,
+		Services:  config.Config.Services,
+	}
+	err = config.UpdateConfig(conf)
+	if err != nil {
+		log.Logger.Fatal().Msgf("Error updating conf with device id: %s", err)
+		return
+	}
 }

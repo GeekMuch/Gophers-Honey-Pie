@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	"io/ioutil"
 
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -14,7 +13,23 @@ import (
 var Config *model.PiConf
 var ConfPath string = "boot/config.yml"
 
-func ReadConfigFile() {
+func Initialize() {
+	readConfigFile()
+	CheckForInternet()
+	CheckForC2Server(Config.C2)
+	ip, err := GetIP()
+	if err != nil {
+		log.Logger.Warn().Msgf("Error getting ip: %s", err)
+		return
+	}
+	if Config.IpStr != ip.String() {
+		Config.IpStr = ip.String()
+		//todo update database on backend
+
+	}
+}
+
+func readConfigFile() {
 
 	yfile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
@@ -28,17 +43,18 @@ func ReadConfigFile() {
 		log.Logger.Error().Msgf("[X]\tError in unmarshal YAML - ", err2)
 	}
 
-	log.Logger.Info().Msgf("[*] Settings: \n\t\tC2:\t\t%v \n\t\tIPStr:\t\t%v \n\t\tHostname:\t%v \n\t\tMAC:\t%v \n\t\tConfigured:\t%v \n\t\tPort:\t\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
+	log.Logger.Info().Msgf("[*] Settings: \n\t\tC2:\t\t%v \n\t\tIPStr:\t\t%v \n\t\tHostname:\t%v \n\t\tNIC Vendor:\t%v \n\t\tMAC:\t%v \n\t\tConfigured:\t%v \n\t\tPort:\t\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
 		conf.C2,
 		conf.IpStr,
 		conf.Hostname,
+		conf.NICVendor,
 		conf.Mac,
 		conf.Configured,
 		conf.Port,
 		conf.DeviceID,
 		conf.DeviceKey)
 
-	log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tRDP:\t%v \n\t\tSMB:\t%v \n\t\tTELNET:\t%v \n",
+	log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tFTP:\t%v \n\t\tSSH:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
 		conf.Services.FTP,
 		conf.Services.SSH,
 		conf.Services.TELNET,
@@ -77,12 +93,41 @@ func WriteConfToYAML() {
 }
 
 func UpdateConfig(conf model.PiConfResponse) error{
+	//todo revert to old conf if something fails.
+	//Making backup config
+	//config := Config
 	if Config.Services != conf.Services {
 		Config.Services = conf.Services
+		//Todo enable correct OpenCanary setting with new func
+		/*err := nil
+		if err != nil {
+			log.Logger.Warn().Msgf("Error updating config, reverting: %s", err)
+			Config = config
+			return err
+		}*/
+	}
+	if Config.DeviceID != conf.DeviceId {
+		Config.DeviceID = conf.DeviceId
+	}
+	if Config.Hostname != conf.Hostname {
+		Config.Hostname = conf.Hostname
+		//todo Set hostname in respective files with func
+	}
+	if Config.NICVendor != conf.NICVendor {
+		Config.NICVendor = conf.NICVendor
+		//Todo generate new mac address with a new func
 	}
 
+	ip, err := GetIP()
+	if err != nil {
+		return err
+	}
 
-	Config.IpStr = helper.GetIP().String()
+	if Config.IpStr != ip.String(){
+		Config.IpStr = ip.String()
+		//todo Make and update ip in backend
+	}
+
 	WriteConfToYAML()
 	return nil
 }

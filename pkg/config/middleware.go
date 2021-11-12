@@ -1,4 +1,4 @@
-package helper
+package config
 
 import (
 	"net"
@@ -31,20 +31,20 @@ func CheckForC2Server(C2 string) {
 /*
 	Get local ip of this RPI
 */
-func GetIP() net.IP {
+func GetIP() (net.IP, error) {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tConnection is down! [ERROR] -  \n", err)
+		return nil, err
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
-	return localAddr.IP
+	return localAddr.IP, nil
 }
 
 func AuthenticationToken() string {
 	// Create a Bearer string by appending string access token
 	// TODO: Change token to environment variable
-	var bearer = "Bearer " + "XxPFUhQ8R7kKhpgubt7v"
+	var bearer = "Bearer " + Config.DeviceKey
 	return bearer
 }
 
@@ -59,7 +59,11 @@ func CheckForInternet() {
 		log.Logger.Error().Msgf("[X]\tConnection is down!")
 	} else {
 		log.Logger.Info().Msgf("[+]\tConnection is up!")
-		log.Logger.Info().Msgf("[!]\tIP is -> %s", GetIP())
+		ipstr, err := GetIP()
+		if err != nil {
+			log.Logger.Warn().Msgf("Error getting ip address: %s", err)
+		}
+		log.Logger.Info().Msgf("[!]\tIP is -> %s", ipstr.String())
 		defer conn.Close()
 	}
 }
