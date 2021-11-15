@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-
+	opencanaryconfig "github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
@@ -54,6 +54,15 @@ func GetConfFromBackend() {
 		if err != nil {
 			log.Logger.Warn().Msgf("Error updating config", err)
 		}
+
+		if config.Config.Services != respStruct.Services {
+			config.Config.Services = respStruct.Services
+			//Todo enable correct OpenCanary setting with new func
+			//Todo start and stop opencanary
+			if err := opencanaryconfig.UpdateCanary(respStruct); err != nil {
+				log.Logger.Warn().Msgf("Error updating opencanary: %s", err)
+			}
+		}
 		//log.Logger.Warn().Msgf("Response: %v", respStruct)
 		log.Logger.Info().Msgf("[*] Updated Services in config file: " +
 			"\n\tHostname: \t%v " +
@@ -81,7 +90,7 @@ func Heartbeat() {
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.Heartbeat{
-			DeviceID: config.Config.DeviceID}
+		DeviceID: config.Config.DeviceID}
 
 		postBody, _ := json.Marshal(sendStruct)
 

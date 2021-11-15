@@ -11,7 +11,7 @@ import (
 )
 
 var Config *model.PiConf
-var ConfPath string = "boot/config.yml"
+var ConfPath string = "/boot/config.yml"
 
 func Initialize() {
 	readConfigFile()
@@ -94,18 +94,10 @@ func WriteConfToYAML() {
 
 func UpdateConfig(conf model.PiConfResponse) error{
 	//todo revert to old conf if something fails.
+
 	//Making backup config
 	//config := Config
-	if Config.Services != conf.Services {
-		Config.Services = conf.Services
-		//Todo enable correct OpenCanary setting with new func
-		/*err := nil
-		if err != nil {
-			log.Logger.Warn().Msgf("Error updating config, reverting: %s", err)
-			Config = config
-			return err
-		}*/
-	}
+
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}

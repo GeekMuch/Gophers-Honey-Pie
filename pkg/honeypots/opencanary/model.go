@@ -10,14 +10,14 @@ type canaryConf struct {
 	FtpPort                      uint16       `json:"ftp.port"`
 	FtpBanner                    string       `json:"ftp.banner"`
 	HttpBanner                   string       `json:"http.banner"`
-	HttpEnabled                  bool       `json:"http.enabled"`
+	HttpEnabled                  bool         `json:"http.enabled"`
 	HttpPort                     uint16       `json:"http.port"`
 	HttpSkin                     string       `json:"http.skin"`
 	HttpProxyEnabled             bool         `json:"httpproxy.enabled"`
 	HttpProxyPort                uint16       `json:"httpproxy.port"`
-	HttpProxySkin    string       `json:"httpproxy.skin"`
-	Logger           logger       `json:"logger"`
-	PortScanEnabled  bool         `json:"portscan.enabled"`
+	HttpProxySkin                string       `json:"httpproxy.skin"`
+	Logger                       logger       `json:"logger"`
+	PortScanEnabled              bool         `json:"portscan.enabled"`
 	PortScanIgnoreLocalhost      bool         `json:"portscan.ignore_localhost"`
 	PortScanLogfile              string       `json:"portscan.logfile"`
 	PortScanSynrate              uint8        `json:"portscan.synrate"`
@@ -49,7 +49,7 @@ type canaryConf struct {
 	TcpBanner1Port               uint16       `json:"tcpbanner_1.port"`
 	TcpBanner1DataReceivedBanner string       `json:"tcpbanner_1.datareceivedbanner"`
 	TcpBanner1InitBanner         string       `json:"tcpbanner_1.initbanner"`
-	TcpBanner1AlertstringEnabled  bool         `json:"tcpbanner_1.alertstring.enabled"`
+	TcpBanner1AlertstringEnabled bool         `json:"tcpbanner_1.alertstring.enabled"`
 	TcpBanner1Alertstring        string       `json:"tcpbanner_1.alertstring"`
 	TcpBanner1KeepAliveEnabled   bool         `json:"tcpbanner_1.keep_alive.enabled"`
 	TcpBanner1KeepAliveSecret    string       `json:"tcpbanner_1.keep_alive_secret"`
@@ -58,9 +58,9 @@ type canaryConf struct {
 	TcpBanner1KeepAliveIdle      uint         `json:"tcpbanner_1.keep_alive_idle"`
 	TelnetEnabled                bool         `json:"telnet.enabled"`
 	TelnetPort                   uint16       `json:"telnet.port"`
-	TelnetBanner     string       `json:"telnet.banner"`
-	TelnetHoneycreds []honeycreds `json:"telnet.honeycreds"`
-	MssqlEnabled     bool         `json:"mssql.enabled"`
+	TelnetBanner                 string       `json:"telnet.banner"`
+	TelnetHoneycreds             []honeycreds `json:"telnet.honeycreds"`
+	MssqlEnabled                 bool         `json:"mssql.enabled"`
 	MssqlVersion                 string       `json:"mssql.version"`
 	MssqlPort                    uint16       `json:"mssql.port"`
 	VncEnabled                   bool         `json:"vnc.enabled"`
