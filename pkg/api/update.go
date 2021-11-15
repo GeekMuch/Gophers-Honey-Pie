@@ -64,7 +64,7 @@ func GetConfFromBackend() {
 			}
 		}
 		//log.Logger.Warn().Msgf("Response: %v", respStruct)
-		log.Logger.Info().Msgf("[*] Updated Services in config file: " +
+		log.Logger.Info().Msgf("[*] Updated Services in config file from backend: " +
 			"\n\tHostname: \t%v " +
 			"\n\tNICVendor:\t%v " +
 			"\n\tDeviceID:\t%v " +

@@ -67,6 +67,7 @@ func readConfigFile() {
 }
 
 func CheckIfDeviceIDExits() bool {
+	log.Logger.Info().Msgf("Checking devide id: %d", Config.DeviceID)
 	if Config.DeviceID == 0 {
 		log.Logger.Warn().Msg("[!] Device ID not set")
 		return false
@@ -94,10 +95,8 @@ func WriteConfToYAML() {
 
 func UpdateConfig(conf model.PiConfResponse) error{
 	//todo revert to old conf if something fails.
-
 	//Making backup config
 	//config := Config
-
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}

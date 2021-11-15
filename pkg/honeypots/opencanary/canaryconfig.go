@@ -20,22 +20,23 @@ func Initialize() error{
 	if err != nil {
 		return err
 	}
+	stopCanary()
 	err = startCanary()
 	if err != nil {
+		log.Logger.Error().Msgf("Error starting opencanary: %s", err)
 		return err
 	}
 	return nil
 }
 
 func stopCanary() error{
-	log.Logger.Warn().Msg("[X]\tStopping OpenCanary!")
+	log.Logger.Info().Msg("[X]\tStopping OpenCanary!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("opencanaryd", "--stop")
 	// cmd.Stderr = os.Stdout
 	// cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError in stopping OpenCanary - \n", err)
 		return err
 	}
 	log.Logger.Info().Msgf("[*]\t[DONE] OpenCanary Stoped")
@@ -43,14 +44,13 @@ func stopCanary() error{
 }
 
 func startCanary() error{
-	log.Logger.Warn().Msg("[X]\tStarting OpenCanary!")
+	log.Logger.Info().Msg("[X]\tStarting OpenCanary!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("opencanaryd", "--start")
 	// cmd.Stderr = os.Stdout
 	// cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError in starting OpenCanary - \n", err)
 		return err
 	}
 	log.Logger.Info().Msgf("[*]\t[DONE] OpenCanary Started")
@@ -88,7 +88,6 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 	conf.TelnetEnabled = responseModel.Services.TELNET
 	conf.HttpEnabled = responseModel.Services.HTTP
 	conf.SmbEnabled = responseModel.Services.SMB
-	log.Logger.Warn().Msgf("Err hit here %v", conf)
 	data, err := json.MarshalIndent(&conf, "", "    ")
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in JSON Marshal - ", err)
@@ -101,7 +100,6 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 		conf = confBak
 		return err
 	}
-	log.Logger.Info().Msgf("[!]  FTP: %v SSH port : %v", conf.FtpEnabled, conf.SshPort)
 
 	return nil
 }
