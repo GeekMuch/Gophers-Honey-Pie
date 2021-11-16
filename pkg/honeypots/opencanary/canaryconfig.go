@@ -32,7 +32,7 @@ func Initialize() error{
 func stopSMB() error{
 	log.Logger.Info().Msg("[X]\tStopping Samba!")
 	// fmt.Println("[+] Fetching updates!")
-	cmd := exec.Command("systemctl", "stop","smdb")
+	cmd := exec.Command("systemctl", "stop","smbd")
 	// cmd.Stderr = os.Stdout
 	// cmd.Stdout = os.Stdout
 	err := cmd.Run()
@@ -46,7 +46,7 @@ func stopSMB() error{
 func startSMB() error{
 	log.Logger.Info().Msg("[!]\tStarting Samba!")
 	// fmt.Println("[+] Fetching updates!")
-	cmd := exec.Command("systemctl", "start", "smdb")
+	cmd := exec.Command("systemctl", "start", "smbd")
 	// cmd.Stderr = os.Stdout
 	// cmd.Stdout = os.Stdout
 	err := cmd.Run()
