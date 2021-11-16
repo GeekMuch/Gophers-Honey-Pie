@@ -30,7 +30,7 @@ func Initialize() error{
 }
 
 func stopSMB() error{
-	log.Logger.Info().Msg("[X]\tStopping OpenCanary!")
+	log.Logger.Info().Msg("[X]\tStopping Samba!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("systemctl", "stop","smdb")
 	// cmd.Stderr = os.Stdout
@@ -39,12 +39,12 @@ func stopSMB() error{
 	if err != nil {
 		return err
 	}
-	log.Logger.Info().Msgf("[*]\t[DONE] OpenCanary Stoped")
+	log.Logger.Info().Msgf("[*]\t[DONE] Samba Stoped")
 	return nil
 }
 
 func startSMB() error{
-	log.Logger.Info().Msg("[X]\tStarting OpenCanary!")
+	log.Logger.Info().Msg("[X]\tStarting Samba!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("systemctl", "start", "smdb")
 	// cmd.Stderr = os.Stdout
@@ -53,7 +53,7 @@ func startSMB() error{
 	if err != nil {
 		return err
 	}
-	log.Logger.Info().Msgf("[*]\t[DONE] OpenCanary Started")
+	log.Logger.Info().Msgf("[*]\t[DONE] Samba Started")
 	return nil
 }
 
@@ -135,6 +135,7 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 
 func UpdateCanary(conf model.PiConfResponse) error {
 	if conf.Services.SMB == true {
+		log.Logger.Debug().Msgf("For SMB: %v", conf.Services.SMB)
 		if err := startSMB(); err != nil {
 			log.Logger.Warn().Msgf("Error starting SMB: %s", err)
 		}
