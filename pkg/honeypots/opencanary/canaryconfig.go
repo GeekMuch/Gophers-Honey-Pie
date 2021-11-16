@@ -112,16 +112,6 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 	log.Logger.Info().Msgf("[*]\tAdding configuration to JSON %v", responseModel)
 	log.Logger.Info().Msgf("[*]\tcanary conf %v", *conf)
 	confBak := conf
-	if responseModel.Services.SMB == true {
-		if err := startSMB(); err != nil {
-			log.Logger.Warn().Msgf("Error starting SMB: %s", err)
-		}
-	}
-	if responseModel.Services.SMB == false {
-		if err := stopSMB(); err != nil {
-			log.Logger.Warn().Msgf("Error stopping SMB: %s", err)
-		}
-	}
 	conf.SshEnabled = responseModel.Services.SSH
 	conf.FtpEnabled = responseModel.Services.FTP
 	conf.TelnetEnabled = responseModel.Services.TELNET
@@ -144,6 +134,16 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 }
 
 func UpdateCanary(conf model.PiConfResponse) error {
+	if conf.Services.SMB == true {
+		if err := startSMB(); err != nil {
+			log.Logger.Warn().Msgf("Error starting SMB: %s", err)
+		}
+	}
+	if conf.Services.SMB == false {
+		if err := stopSMB(); err != nil {
+			log.Logger.Warn().Msgf("Error stopping SMB: %s", err)
+		}
+	}
 
 	if err := stopCanary(); err != nil {
 		log.Logger.Warn().Msgf("Error stopping opencanary: %s", err)
