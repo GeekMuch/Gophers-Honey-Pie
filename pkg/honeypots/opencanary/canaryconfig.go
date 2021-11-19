@@ -15,7 +15,7 @@ import (
 var CanaryConfPath = "/etc/opencanaryd/opencanary.conf" //"boot/opencanary.conf"
 var conf *canaryConf
 
-func Initialize() error{
+func Initialize() error {
 	err := readFromCanaryConfig()
 	if err != nil {
 		return err
@@ -29,7 +29,7 @@ func Initialize() error{
 	return nil
 }
 
-func stopCanary() error{
+func stopCanary() error {
 	log.Logger.Info().Msg("[X]\tStopping OpenCanary!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("opencanaryd", "--stop")
@@ -43,7 +43,7 @@ func stopCanary() error{
 	return nil
 }
 
-func startCanary() error{
+func startCanary() error {
 	log.Logger.Info().Msg("[X]\tStarting OpenCanary!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("opencanaryd", "--start")
@@ -88,6 +88,7 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 	conf.TelnetEnabled = responseModel.Services.TELNET
 	conf.HttpEnabled = responseModel.Services.HTTP
 	conf.SmbEnabled = responseModel.Services.SMB
+	// TODO: Add conf.IpIgnoreList = responseModel.IgnoreList
 	data, err := json.MarshalIndent(&conf, "", "    ")
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in JSON Marshal - ", err)
