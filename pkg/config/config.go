@@ -88,7 +88,7 @@ func updateHostname(hostname string)error{
 		log.Logger.Warn().Msgf("[X]\tError rebooting after Hostname change: %s", err)
 		return err
 	}
-	return err
+	return nil
 }
 
 func CheckIfDeviceIDExits() bool {
