@@ -72,6 +72,7 @@ func rebootPi() error{
 	cmd := exec.Command("sleep", "5","&&","reboot" )
 	err := cmd.Run()
 	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError rebooting after Hostname change: %s", err)
 		return err
 	}
 	return nil
@@ -80,14 +81,11 @@ func rebootPi() error{
 func updateHostname(hostname string)error{
 	cmd := exec.Command("echo", hostname,">","/etc/hostname" )
 	err := cmd.Run()
-	if err != nil {
+	if err != nil{
+		log.Logger.Warn().Msgf("[X]\tError in Hostname command change: %s", err)
 		return err
 	}
-		return err
-	if err := rebootPi(); err != nil {
-		log.Logger.Warn().Msgf("[X]\tError rebooting after Hostname change: %s", err)
-		return err
-	}
+	rebootPi()
 	return nil
 }
 
@@ -127,9 +125,11 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 	if Config.Hostname != conf.Hostname && conf.Hostname != "" {
 		Config.Hostname = conf.Hostname
-		if err := updateHostname(conf.Hostname); err != nil {
-			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
-		}
+		log.Logger.Warn().Msgf("HOSTNAME -> %s", Config.Hostname)
+		updateHostname(conf.Hostname)
+		//if err := updateHostname(conf.Hostname); err != nil {
+		//	log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
+		//}
 
 		//todo Set hostname in respective files with func
 	}

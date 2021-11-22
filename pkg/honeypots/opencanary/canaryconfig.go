@@ -106,7 +106,7 @@ func readFromCanaryConfig() error {
 
 func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 	log.Logger.Info().Msgf("[*]\tAdding configuration to JSON %v", responseModel)
-	log.Logger.Info().Msgf("[*]\tcanary conf %v", *conf)
+	//log.Logger.Info().Msgf("[*]\tcanary conf %v", *conf)
 	confBak := conf
 	conf.SshEnabled = responseModel.Services.SSH
 	conf.FtpEnabled = responseModel.Services.FTP
