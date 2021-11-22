@@ -122,16 +122,16 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	//todo revert to old conf if something fails.
 	//Making backup config
 	//config := Config
+	log.Logger.Debug().Msgf("Config: %v \t conf: %v", Config, conf)
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}
 	if Config.Hostname != conf.Hostname && conf.Hostname != "" {
 		Config.Hostname = conf.Hostname
 		log.Logger.Warn().Msgf("HOSTNAME -> %s", Config.Hostname)
-		updateHostname(conf.Hostname)
-		//if err := updateHostname(conf.Hostname); err != nil {
-		//	log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
-		//}
+		if err := updateHostname(conf.Hostname); err != nil {
+			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
+		}
 
 		//todo Set hostname in respective files with func
 	}
