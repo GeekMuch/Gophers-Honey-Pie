@@ -3,6 +3,7 @@ package config
 import (
 	"io/ioutil"
 	"os/exec"
+	"time"
 
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
@@ -69,7 +70,8 @@ func readConfigFile() {
 
 func rebootPi() error{
 	log.Logger.Info().Msg("[X]\tRebooting Gophers Pi in 5 seconds!")
-	cmd := exec.Command("sleep", "5","&&","reboot" )
+	time.Sleep(5 * time.Second)
+	cmd := exec.Command("reboot" )
 	err := cmd.Run()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError rebooting after Hostname change: %s", err)
