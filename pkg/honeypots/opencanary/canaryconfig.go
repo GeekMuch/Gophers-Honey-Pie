@@ -23,7 +23,7 @@ func Initialize() error{
 	stopCanary()
 	err = startCanary()
 	if err != nil {
-		log.Logger.Error().Msgf("Error starting opencanary: %s", err)
+		log.Logger.Error().Msgf("[X]\tError starting opencanary: %s", err)
 		return err
 	}
 	return nil
@@ -39,7 +39,6 @@ func stopSMB() error{
 	if err != nil {
 		return err
 	}
-	log.Logger.Info().Msgf("[*]\t[DONE] Samba Stoped")
 	return nil
 }
 
@@ -53,7 +52,6 @@ func startSMB() error{
 	if err != nil {
 		return err
 	}
-	log.Logger.Info().Msgf("[*]\t[DONE] Samba Started")
 	return nil
 }
 
@@ -68,7 +66,6 @@ func stopCanary() error{
 	if err != nil {
 		return err
 	}
-	log.Logger.Info().Msgf("[*]\t[DONE] OpenCanary Stoped")
 	return nil
 }
 
@@ -82,7 +79,6 @@ func startCanary() error{
 	if err != nil {
 		return err
 	}
-	log.Logger.Info().Msgf("[*]\t[DONE] OpenCanary Started")
 	return nil
 }
 
@@ -91,7 +87,7 @@ func readFromCanaryConfig() error {
 	file, err := os.Open(CanaryConfPath)
 	defer file.Close()
 	if err != nil {
-		log.Logger.Warn().Msgf("Error opening file: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError opening file: %s", err)
 	}
 	jFile, err := ioutil.ReadAll(file)
 	if err != nil {
@@ -100,7 +96,7 @@ func readFromCanaryConfig() error {
 	//log.Logger.Debug().Msgf("ConfFile: %s", jFile)
 	err = json.Unmarshal(jFile, &conf)
 	if err != nil {
-		log.Logger.Warn().Msgf("Error decoding json: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError decoding json: %s", err)
 	}
 	//log.Logger.Debug().Msgf("JSON : %v", *conf)
 	//log.Logger.Warn().Msgf("Hello %v", responseModel)
@@ -136,23 +132,22 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 func UpdateCanary(conf model.PiConfResponse) error {
 	if conf.Services.SMB == true {
 		if err := startSMB(); err != nil {
-			log.Logger.Warn().Msgf("Error starting SMB: %s", err)
+			log.Logger.Warn().Msgf("[X]\tError starting SMB: %s", err)
 		}
 	}
 	if conf.Services.SMB == false {
 		if err := stopSMB(); err != nil {
-			log.Logger.Warn().Msgf("Error stopping SMB: %s", err)
+			log.Logger.Warn().Msgf("[X]\tError stopping SMB: %s", err)
 		}
 	}
-
 	if err := stopCanary(); err != nil {
-		log.Logger.Warn().Msgf("Error stopping opencanary: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError stopping opencanary: %s", err)
 	}
 	if err := writeToCanaryConfigFile(conf); err != nil {
-		log.Logger.Warn().Msgf("Error writing to canary conf: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError writing to canary conf: %s", err)
 	}
 	if err := startCanary(); err != nil {
-		log.Logger.Warn().Msgf("Error starting opencanary: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError starting opencanary: %s", err)
 	}
 	return nil
 }

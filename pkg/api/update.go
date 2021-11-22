@@ -3,11 +3,11 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	opencanaryconfig "github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
+	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"net/http"
 	"time"
-	opencanaryconfig "github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
-	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
@@ -52,7 +52,7 @@ func GetConfFromBackend() {
 
 		err = config.UpdateConfig(respStruct)
 		if err != nil {
-			log.Logger.Warn().Msgf("Error updating config", err)
+			log.Logger.Warn().Msgf("[X]\tError updating config", err)
 		}
 
 		if config.Config.Services != respStruct.Services {
@@ -60,11 +60,11 @@ func GetConfFromBackend() {
 			//Todo enable correct OpenCanary setting with new func
 			//Todo start and stop opencanary
 			if err := opencanaryconfig.UpdateCanary(respStruct); err != nil {
-				log.Logger.Warn().Msgf("Error updating opencanary: %s", err)
+				log.Logger.Warn().Msgf("[X]\tError updating opencanary: %s", err)
 			}
 		}
 		//log.Logger.Warn().Msgf("Response: %v", respStruct)
-		log.Logger.Info().Msgf("[*] Updated Services in config file from backend: " +
+		log.Logger.Info().Msgf("[*]\tUpdated Services in config file from backend: " +
 			"\n\tHostname: \t%v " +
 			"\n\tNICVendor:\t%v " +
 			"\n\tDeviceID:\t%v " +

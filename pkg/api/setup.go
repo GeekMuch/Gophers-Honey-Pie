@@ -66,7 +66,7 @@ func RegisterDevice() {
 	}
 	err = config.UpdateConfig(conf)
 	if err != nil {
-		log.Logger.Fatal().Msgf("Error updating conf with device id: %s", err)
+		log.Logger.Fatal().Msgf("[X]\tError updating conf with device id: %s", err)
 		return
 	}
 }
