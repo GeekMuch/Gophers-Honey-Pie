@@ -81,7 +81,7 @@ func rebootPi() error{
 func updateHostname(hostname string)error{
 	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
 	data := []byte(hostname)
-	err := ioutil.WriteFile(ConfPath, []byte(data), 0755)
+	err := ioutil.WriteFile("/etc/hostname", []byte(data), 0755)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError writing to YAML - ", err)
 	}
