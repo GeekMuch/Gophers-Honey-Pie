@@ -79,6 +79,8 @@ func rebootPi() error{
 }
 
 func updateHostname(hostname string)error{
+	log.Logger.Warn().Msg("HITT")
+
 	cmd := exec.Command("echo", hostname,">","/etc/hostname" )
 	err := cmd.Run()
 	if err != nil{
