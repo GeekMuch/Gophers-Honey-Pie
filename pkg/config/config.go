@@ -2,7 +2,6 @@ package config
 
 import (
 	"io/ioutil"
-	"os"
 	"os/exec"
 
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -81,17 +80,21 @@ func rebootPi() error{
 
 func updateHostname(hostname string)error{
 	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
-
-	f, err := os.OpenFile("/etc/hostname", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+	data := []byte(hostname)
+	err := ioutil.WriteFile(ConfPath, []byte(data), 0755)
 	if err != nil {
-		panic(err)
+		log.Logger.Error().Msgf("[X]\tError writing to YAML - ", err)
 	}
-
-	defer f.Close()
-
-	if _, err = f.WriteString(hostname); err != nil {
-		panic(err)
-	}
+	//f, err := os.OpenFile("/etc/hostname", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//defer f.Close()
+	//
+	//if _, err = f.WriteString(hostname); err != nil {
+	//	panic(err)
+	//}
 	//cmd := exec.Command("echo", hostname,">","/etc/hostname" )
 	//err := cmd.Run()
 	//if err != nil{
