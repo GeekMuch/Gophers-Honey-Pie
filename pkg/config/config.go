@@ -79,15 +79,13 @@ func rebootPi() error{
 }
 
 func updateHostname(hostname string)error{
-	log.Logger.Warn().Msg("HITT")
-
+	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
 	cmd := exec.Command("echo", hostname,">","/etc/hostname" )
 	err := cmd.Run()
 	if err != nil{
 		log.Logger.Warn().Msgf("[X]\tError in Hostname command change: %s", err)
 		return err
 	}
-	rebootPi()
 	return nil
 }
 
@@ -122,15 +120,15 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	//todo revert to old conf if something fails.
 	//Making backup config
 	//config := Config
-	log.Logger.Debug().Msgf("Config: %v \t conf: %v", Config, conf)
+	var rebootFlag = false
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}
 	if Config.Hostname != conf.Hostname && conf.Hostname != "" {
 		Config.Hostname = conf.Hostname
-		log.Logger.Warn().Msgf("HOSTNAME -> %s", Config.Hostname)
 		if err := updateHostname(conf.Hostname); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
+			rebootFlag = true
 		}
 
 		//todo Set hostname in respective files with func
@@ -151,5 +149,8 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	WriteConfToYAML()
+	if rebootFlag {
+		rebootPi()
+	}
 	return nil
 }
