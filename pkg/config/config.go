@@ -99,6 +99,16 @@ func interfaceUp() error{
 	return nil
 }
 
+func getNICVendorList() error{
+	cmd := exec.Command("ifconfig", "eth0", "up" )
+	err := cmd.Run()
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError in putting down, command  %s", err)
+		return err
+	}
+	return nil
+}
+
 func ChangeNICVendor(NICVendor string) error{
 	log.Logger.Debug().Msg("[!]\tChanging NIC Vendor!")
 
