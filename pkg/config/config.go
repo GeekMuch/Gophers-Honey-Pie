@@ -75,16 +75,52 @@ func rebootPi() error{
 	cmd := exec.Command("reboot" )
 	err := cmd.Run()
 	if err != nil {
-		log.Logger.Warn().Msgf("[X]\tError rebooting after Hostname change: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError rebooting after Hostname change, command: %s", err)
+		return err
+	}
+	return nil
+}
+func interfaceDown() error{
+	cmd := exec.Command("ifconfig", "eth0", "down" )
+	err := cmd.Run()
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError in putting down  %s", err)
+		return err
+	}
+	return nil
+}
+func interfaceUp() error{
+	cmd := exec.Command("ifconfig", "eth0", "up" )
+	err := cmd.Run()
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError in putting down, command  %s", err)
 		return err
 	}
 	return nil
 }
 
+func ChangeNICVendor(NICVendor string) error{
+	log.Logger.Debug().Msg("[!]\tChanging NIC Vendor!")
+
+	interfaceDown()
+
+	cmd := exec.Command("reboot" )
+	err := cmd.Run()
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError in changing the NIC Vendor command: %s", err)
+		return err
+	}
+
+	interfaceUp()
+
+
+	return nil 
+}
+
 func updateHostname(hostname string)error{
 	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
 	hostnameString := []byte(hostname)
-	err := ioutil.WriteFile("/etc/hostname", []byte(hostnameString), 0755)
+	err := ioutil.WriteFile("/etc/hostname", []byte(hostnameString), 0644)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError writing to /etc/hostname - ", err)
 	}
@@ -97,7 +133,7 @@ func updateHostname(hostname string)error{
 
 	for i, line := range lines {
 		if strings.Contains(line, "127.0.1.1") {
-			lines[i] = "127.0.1.1\t"+ hostname
+			lines[i] = "127.0.1.1\t" + hostname
 		}
 	}
 	output := strings.Join(lines, "\n")
@@ -163,6 +199,9 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
 		Config.NICVendor = conf.NICVendor
+		if err := ChangeNICVendor(conf.NICVendor); err != nil {
+			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
+		}
 		//Todo generate new mac address with a new func
 	}
 
