@@ -88,7 +88,6 @@ func writeToCanaryConfigFile(responseModel model.PiConfResponse) error {
 	conf.TelnetEnabled = responseModel.Services.TELNET
 	conf.HttpEnabled = responseModel.Services.HTTP
 	conf.SmbEnabled = responseModel.Services.SMB
-	// TODO: Add conf.IpIgnoreList = responseModel.IgnoreList
 	data, err := json.MarshalIndent(&conf, "", "    ")
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in JSON Marshal - ", err)

@@ -100,6 +100,6 @@ type StandardLog struct {
 	LogTimeStamp time.Time          `bson:"log_time_stamp" json:"log_time_stamp"`
 	Message      string             `bson:"message,omitempty" json:"message"`
 	Level        int                `bson:"level" json:"level"`
-	LogType      string             `bson:"log_type" json:"log_type"` // TODO: Possibly no use or opencanary specific.
+	LogType      string             `bson:"log_type" json:"log_type"`
 	RawLog       string             `bson:"raw_log" json:"raw_log"`
 }

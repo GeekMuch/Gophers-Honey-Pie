@@ -6,8 +6,6 @@ import (
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
-var whitelist []string
-
 // ParseOpenCanaryLog takes logs formatted by OpenCanary and converts them
 // into a standardized log format.
 func ParseOpenCanaryLog(jsonLog string) (StandardLog, error) {
@@ -18,12 +16,6 @@ func ParseOpenCanaryLog(jsonLog string) (StandardLog, error) {
 	if err != nil {
 		log.Logger.Warn().Msgf("Error unmarshalling JSON: %s", err)
 		return StandardLog{}, err
-	}
-
-	// Drop log if source IP is whitelisted.
-	if isWhitelisted(opencanaryLog.SrcHost) {
-		log.Logger.Info().Msgf("IP: %s is whitelisted. Dropping log.", opencanaryLog.SrcHost)
-		return StandardLog{}, nil
 	}
 
 	// Extract logdata/message as json.
@@ -43,13 +35,13 @@ func ParseOpenCanaryLog(jsonLog string) (StandardLog, error) {
 	standardLog.LogTimeStamp = opencanaryLog.LocalTime
 	standardLog.Message = string(logdataMarshalled)
 	// Get severity level of log type.
-	standardLog.Level, err = getSeverityLevel(opencanaryLog.LogType)
+	standardLog.Level, err = getOpenCanaryLogLevel(opencanaryLog.LogType)
 	if err != nil {
 		log.Logger.Warn().Msgf("Error getting severity level: %s", err)
 		return StandardLog{}, err
 	}
 	standardLog.LogType = OpencanaryLogTypes[opencanaryLog.LogType]
-	// Include raw opencanary log for redundancy.
+	// Include raw opencanary log for storage.
 	standardLog.RawLog = jsonLog
 
 	return standardLog, nil
