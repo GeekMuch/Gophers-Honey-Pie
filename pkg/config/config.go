@@ -3,6 +3,7 @@ package config
 import (
 	"io/ioutil"
 	"os/exec"
+	"strings"
 	"time"
 
 	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -33,14 +34,14 @@ func Initialize() {
 
 func readConfigFile() {
 
-	yfile, err := ioutil.ReadFile(ConfPath)
+	yFile, err := ioutil.ReadFile(ConfPath)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in reading YAML  - ", err)
 	}
 
 	// settings := make(map[string]model.PiConf)
 	conf := model.PiConf{}
-	err2 := yaml.Unmarshal(yfile, &conf)
+	err2 := yaml.Unmarshal(yFile, &conf)
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError in unmarshal YAML - ", err2)
 	}
@@ -82,21 +83,30 @@ func rebootPi() error{
 
 func updateHostname(hostname string)error{
 	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
-	data := []byte(hostname)
-	err := ioutil.WriteFile("/etc/hostname", []byte(data), 0755)
+	hostnameString := []byte(hostname)
+	err := ioutil.WriteFile("/etc/hostname", []byte(hostnameString), 0755)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError writing to YAML - ", err)
+		log.Logger.Error().Msgf("[X]\tError writing to /etc/hostname - ", err)
 	}
-	//f, err := os.OpenFile("/etc/hostname", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//defer f.Close()
-	//
-	//if _, err = f.WriteString(hostname); err != nil {
-	//	panic(err)
-	//}
+	input, err := ioutil.ReadFile("/etc/hosts")
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tError reading /etc/hosts - ", err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, "127.0.1.1") {
+			lines[i] = "127.0.1.1\t"+ hostname
+		}
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile("/etc/hosts", []byte(output), 0644)
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tError writing /etc/hosts - ", err)
+	}
+
+	// BIG NO NO RISK baaaad code
 	//cmd := exec.Command("echo", hostname,">","/etc/hostname" )
 	//err := cmd.Run()
 	//if err != nil{
@@ -104,6 +114,7 @@ func updateHostname(hostname string)error{
 	//	return err
 	//}
 	return nil
+
 }
 
 func CheckIfDeviceIDExits() bool {
