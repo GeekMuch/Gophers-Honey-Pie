@@ -25,12 +25,13 @@ func main() {
 		log.Logger.Fatal().Msgf("Error initializing honeypots: %s", err)
 		return
 	}
+	for {
 	go api.GetConfFromBackend()
 	go api.Heartbeat()
 	//opencanary.ReadFromToCanaryConfig()
 	//opencanary.WriteToCanaryConfigFile()
 	//opencanary.Start()
-	for {
+
 	}
 
 	// api.GetDeviceIDFromAPI()
