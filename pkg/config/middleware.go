@@ -61,7 +61,7 @@ func CheckForInternet() {
 		log.Logger.Info().Msgf("[+]\tConnection is up!")
 		ipstr, err := GetIP()
 		if err != nil {
-			log.Logger.Warn().Msgf("Error getting ip address: %s", err)
+			log.Logger.Warn().Msgf("[X]\tError getting ip address: %s", err)
 		}
 		log.Logger.Info().Msgf("[!]\tIP is -> %s", ipstr.String())
 		defer conn.Close()
