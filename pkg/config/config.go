@@ -116,6 +116,8 @@ func getNICVendorList() error {
 	fmt.Print("[ + ] Downloading \n")
 	cmd1 := exec.Command("echo","$PATH")
 	err1 := cmd1.Run()
+	cmd1.Stderr = os.Stdout
+	cmd1.Stdout = os.Stdout
 	if err1 != nil {
 		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err1)
 	}
