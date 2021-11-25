@@ -286,6 +286,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 
 	ip, err := GetIP()
 	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError getting IP: %s", err)
 		return err
 	}
 
