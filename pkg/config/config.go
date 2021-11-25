@@ -100,7 +100,7 @@ func interfaceUp() error{
 }
 
 func getNICVendorList() error{
-	cmd := exec.Command("ifconfig", "eth0", "up" )
+	cmd := exec.Command("wget", "-O", "http://standards-oui.ieee.org/oui/oui.csv","-P","NICVendors" )
 	err := cmd.Run()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in putting down, command  %s", err)
@@ -113,6 +113,7 @@ func ChangeNICVendor(NICVendor string) error{
 	log.Logger.Debug().Msg("[!]\tChanging NIC Vendor!")
 
 	interfaceDown()
+	getNICVendorList()
 
 	cmd := exec.Command("reboot" )
 	err := cmd.Run()
@@ -130,6 +131,9 @@ func ChangeNICVendor(NICVendor string) error{
 func updateHostname(hostname string)error{
 	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
 	hostnameString := []byte(hostname)
+	if hostname == "" {
+		return nil
+	}
 	err := ioutil.WriteFile("/etc/hostname", []byte(hostnameString), 0644)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError writing to /etc/hostname - ", err)
