@@ -31,8 +31,8 @@ func Initialize() {
 		log.Logger.Warn().Msgf("[X]\tError getting ip: %s", err)
 		return
 	}
-	if Config.IpStr != ip.String() {
-		Config.IpStr = ip.String()
+	if Config.IpStr != ip {
+		Config.IpStr = ip
 		//todo update database on backend
 
 	}
@@ -290,8 +290,8 @@ func UpdateConfig(conf model.PiConfResponse) error{
 		return err
 	}
 
-	if Config.IpStr != ip.String(){
-		Config.IpStr = ip.String()
+	if Config.IpStr != ip{
+		Config.IpStr = ip
 		//todo Make and update ip in backend
 	}
 
