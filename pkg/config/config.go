@@ -118,7 +118,7 @@ func getNICVendorList() error {
 	err1 := cmd1.Run()
 	cmd1.Stderr = os.Stdout
 	cmd1.Stdout = os.Stdout
-	log.Logger.Warn().Msgf("[X]\tRRRR  %s", cmd1)
+	log.Logger.Warn().Msgf("[X]\tRRRR  %s", err1)
 
 	if err1 != nil {
 		log.Logger.Warn().Msgf("[X]\tRRRR  %s", err1)
