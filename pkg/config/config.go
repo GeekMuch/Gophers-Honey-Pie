@@ -85,8 +85,10 @@ func rebootPi() error{
 	}
 	return nil
 }
-func interfaceDown() error{
-	cmd := exec.Command("ifconfig", "eth0", "down" )
+func interfaceDown(iface string) error{
+	log.Logger.Info().Msgf("[*]\tPutting Network interface %s DOWN", iface)
+
+	cmd := exec.Command("ifconfig", iface, "down" )
 	err := cmd.Run()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in putting down  %s", err)
@@ -94,7 +96,8 @@ func interfaceDown() error{
 	}
 	return nil
 }
-func interfaceUp() error{
+func interfaceUp(iface string) error{
+	log.Logger.Info().Msgf("[*]\tPutting Network interface %s UP", iface)
 	cmd := exec.Command("ifconfig", "eth0", "up" )
 	err := cmd.Run()
 	if err != nil {
@@ -113,25 +116,18 @@ func randomHex(n int) (string, error) {
 }
 
 func getNICVendorList() error {
-	fmt.Print("[ + ] Downloading vendor list\n")
+	fmt.Print("[ ! ] Downloading vendor list, please wait.. \n")
 
-	out, err := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv").Output()
+	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv")
+	err := cmd.Run()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
 		return err
 	}
-	fmt.Printf("Downloading -v-  %s\n", out)
-
-	//cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv")
-	//err := cmd.Run()
-	//if err != nil {
-	//	log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
-	//	return err
-	//}
 	return nil
 }
 func readNICVendorFile(NICVendor string) string {
-
+	log.Logger.Info().Msgf("[*]\tReading NIC vendor list")
 
 	if err := getNICVendorList(); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
@@ -175,7 +171,7 @@ func readNICVendorFile(NICVendor string) string {
 func ChangeNICVendor(macAddress string, iface string) error{
 	log.Logger.Debug().Msg("[!]\tChanging NIC Vendor!")
 
-	if err := interfaceDown(); err != nil {
+	if err := interfaceDown(iface); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError putting down network interface: %s", err)
 		return err
 	}
@@ -187,7 +183,7 @@ func ChangeNICVendor(macAddress string, iface string) error{
 		return err
 	}
 
-	if err := interfaceUp(); err != nil {
+	if err := interfaceUp(iface); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError getting network interface up: %s", err)
 		return err
 	}
