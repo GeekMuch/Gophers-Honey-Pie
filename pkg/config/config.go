@@ -125,7 +125,7 @@ func getNICVendorList() error {
 	}
 	return nil
 }
-func readNICVendorFile(NICVendor string) string {
+func readNICVendorFile(NICVendor string) (string, error) {
 
 	if err := getNICVendorList(); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
@@ -138,6 +138,7 @@ func readNICVendorFile(NICVendor string) string {
 	in, err := os.Open("pkg/config/NICVendors/vendors.csv")
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError opening Vendor CSV file  %s", err)
+		return "", nil
 	}
 
 	r := csv.NewReader(in)
@@ -165,7 +166,7 @@ func readNICVendorFile(NICVendor string) string {
 		finalMac = finalMac[:i] + ":" + finalMac[i:]
 	}
 	log.Logger.Info().Msgf("[!]\tNEW MAC is ->  %s",finalMac)
-	return finalMac
+	return finalMac, nil
 }
 
 func ChangeNICVendor(macAddress string, iface string) error{
@@ -180,7 +181,6 @@ func ChangeNICVendor(macAddress string, iface string) error{
 	err := cmd.Run()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in changing the NIC Vendor command: %s", err)
-		return err
 	}
 
 	if err := interfaceUp(iface); err != nil {
@@ -270,6 +270,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 		Config.Hostname = conf.Hostname
 		if err := updateHostname(conf.Hostname); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
+			return err
 		}
 		rebootFlag = true
 
@@ -279,9 +280,14 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
 		log.Logger.Info().Msgf("[ ! ]\tChange in NICVendor initialized\n")
 		Config.NICVendor = conf.NICVendor
-		macAddress := readNICVendorFile(conf.NICVendor)
+		macAddress, _ := readNICVendorFile(conf.NICVendor)
+		if len(macAddress) < 12{
+			log.Logger.Warn().Msgf("[X]\tError, no change in NIC Vendor: %s")
+			return nil
+		}
 		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
+			return err
 		}
 		//Todo generate new mac address with a new func
 	}
