@@ -1,10 +1,20 @@
-package logparser
+package opencanary
 
 import (
 	"encoding/json"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/filewatcher"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
+
+func startChannel(logChannel *filewatcher.LogChannel) {
+	for {
+		select {
+		case msg := <-logChannel.Log:
+			log.Logger.Debug().Msgf("Log received from honeypot: %s", msg)
+		}
+	}
+}
 
 // ParseOpenCanaryLog takes logs formatted by OpenCanary and converts them
 // into a standardized log format.

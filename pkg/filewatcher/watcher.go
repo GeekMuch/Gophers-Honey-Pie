@@ -5,10 +5,20 @@ import (
 	"github.com/hpcloud/tail"
 )
 
+type LogChannel struct {
+	Log chan string
+}
+
+func NewLogChannel() *LogChannel {
+	return &LogChannel{
+		Log: make(chan string),
+	}
+}
+
 // StartNewFileWatcher reads the provided logfile as it is updated. Passes
 // each line read to the parser. File truncation and replacement is
 // handled. Should be run as go routine.
-func StartNewFileWatcher(logFilepath, offsetFilepath string) error {
+func StartNewFileWatcher(logFilepath, offsetFilepath string, logChannel *LogChannel) error {
 	enablePolling := enableFilePolling()
 
 	tailFile, err := tail.TailFile(logFilepath, tail.Config{
@@ -40,6 +50,7 @@ func StartNewFileWatcher(logFilepath, offsetFilepath string) error {
 		if index >= offset {
 			log.Logger.Info().Msgf("New line in log: %s", line.Text)
 			// TODO send line to parser.
+			logChannel.Log <- line.Text
 			offset++
 			err = saveOffsetToFile(offsetFilepath, offset)
 			if err != nil {

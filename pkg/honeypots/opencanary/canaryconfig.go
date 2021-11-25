@@ -2,6 +2,7 @@ package opencanary
 
 import (
 	"encoding/json"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/filewatcher"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"io/ioutil"
 	"os/exec"
@@ -20,12 +21,21 @@ func Initialize() error {
 	if err != nil {
 		return err
 	}
-	stopCanary()
+	_ = stopCanary()
 	err = startCanary()
 	if err != nil {
 		log.Logger.Error().Msgf("Error starting opencanary: %s", err)
 		return err
 	}
+
+	logChannel := filewatcher.NewLogChannel()
+	go startChannel(logChannel)
+	go func() {
+		err = filewatcher.StartNewFileWatcher("/var/tmp/opencanary.log", "/home/zinja/offset.txt", logChannel)
+		if err != nil {
+			log.Logger.Error().Msgf("Filewatcher error: %s", err)
+		}
+	}()
 	return nil
 }
 
@@ -60,7 +70,12 @@ func startCanary() error {
 // Sets the opencanary conf pointer
 func readFromCanaryConfig() error {
 	file, err := os.Open(CanaryConfPath)
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Logger.Error().Msgf("Error closing file: %s", err)
+		}
+	}(file)
 	if err != nil {
 		log.Logger.Warn().Msgf("Error opening file: %s", err)
 	}

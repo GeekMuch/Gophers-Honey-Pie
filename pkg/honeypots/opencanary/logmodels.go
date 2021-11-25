@@ -1,4 +1,4 @@
-package logparser
+package opencanary
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
