@@ -121,12 +121,12 @@ func getNICVendorList() error {
 	if err1 != nil {
 		log.Logger.Warn().Msgf("[X]\tRRRR  %s", err1)
 	}
-	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "NICVendors/vendors.csv")
-	err := cmd.Run()
-	if err != nil {
-		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
-		return err
-	}
+	//cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "NICVendors/vendors.csv")
+	//err := cmd.Run()
+	//if err != nil {
+	//	log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
+	//	return err
+	//}
 	return nil
 }
 func readNICVendorFile(NICVendor string) string {
