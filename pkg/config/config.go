@@ -114,19 +114,12 @@ func randomHex(n int) (string, error) {
 
 func getNICVendorList() error {
 	fmt.Print("[ + ] Downloading vendor list\n")
-
-	out, err := exec.Command("pwd").Output()
+	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv")
+	err := cmd.Run()
 	if err != nil {
-			log.Logger.Warn().Msgf("[ X ]\tError GET REKT  %s", err)
+		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
+		return err
 	}
-	fmt.Printf("[ ? ] %s\n", out)
-
-	//cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "NICVendors/vendors.csv")
-	//err := cmd.Run()
-	//if err != nil {
-	//	log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
-	//	return err
-	//}
 	return nil
 }
 func readNICVendorFile(NICVendor string) string {
