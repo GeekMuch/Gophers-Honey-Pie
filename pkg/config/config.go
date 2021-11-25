@@ -115,7 +115,7 @@ func randomHex(n int) (string, error) {
 func getNICVendorList() error {
 	fmt.Print("[ + ] Downloading vendor list\n")
 
-	out, err := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv")).Output()
+	out, err := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv").Output()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
 		return err
