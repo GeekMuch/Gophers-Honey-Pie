@@ -123,6 +123,12 @@ func getNICVendorList() error {
 	return nil
 }
 func readNICVendorFile(NICVendor string) string {
+	cmd := exec.Command("echo","$PATH")
+	err := cmd.Run()
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
+	}
+
 	if err := getNICVendorList(); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
 	}
