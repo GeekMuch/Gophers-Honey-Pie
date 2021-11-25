@@ -116,7 +116,7 @@ func randomHex(n int) (string, error) {
 }
 
 func getNICVendorList() error {
-	fmt.Print("[ ! ] Downloading vendor list, please wait.. \n")
+	fmt.Print("[ ! ]\tDownloading vendor list, please wait.. \n")
 
 	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv")
 	err := cmd.Run()
@@ -192,7 +192,7 @@ func ChangeNICVendor(macAddress string, iface string) error{
 }
 
 func updateHostname(hostname string)error{
-	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
+	log.Logger.Debug().Msgf("[+]\tExecuting update hostname: %s", hostname)
 	hostnameString := []byte(hostname)
 	if hostname == "" {
 		return nil
@@ -302,5 +302,6 @@ func UpdateConfig(conf model.PiConfResponse) error{
 			return err
 		}
 	}
+	log.Logger.Warn().Msgf("[ ! ! ! ]\tDONE")
 	return nil
 }
