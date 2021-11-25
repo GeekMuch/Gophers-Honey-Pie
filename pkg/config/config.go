@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/csv"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -116,7 +115,7 @@ func randomHex(n int) (string, error) {
 }
 
 func getNICVendorList() error {
-	fmt.Print("[ ! ]\tDownloading vendor list, please wait.. \n")
+	log.Logger.Info().Msgf("[ ! ]\tDownloading vendor list, please wait.. \n")
 
 	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "pkg/config/NICVendors/vendors.csv")
 	err := cmd.Run()
@@ -266,7 +265,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	if Config.Hostname != conf.Hostname && conf.Hostname != "" {
-		log.Logger.Info().Msgf("[*]\tChange in hostname initialized ")
+		log.Logger.Info().Msgf("[ ! ]\tChange in hostname initialized\n")
 		Config.Hostname = conf.Hostname
 		if err := updateHostname(conf.Hostname); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
@@ -277,7 +276,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
-		log.Logger.Info().Msgf("[*]\tChange in NICVendor initialized ")
+		log.Logger.Info().Msgf("[ ! ]\tChange in NICVendor initialized\n")
 		Config.NICVendor = conf.NICVendor
 		macAddress := readNICVendorFile(conf.NICVendor)
 		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
