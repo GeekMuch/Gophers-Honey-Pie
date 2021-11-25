@@ -198,7 +198,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	//todo revert to old conf if something fails.
 	//Making backup config
 	//config := Config
-	var rebootFlag = false
+	//var rebootFlag = false
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}
@@ -207,7 +207,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 		if err := updateHostname(conf.Hostname); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
 		}
-		rebootFlag = true
+		//rebootFlag = true
 
 		//todo Set hostname in respective files with func
 	}
