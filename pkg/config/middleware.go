@@ -31,14 +31,27 @@ func CheckForC2Server(C2 string) {
 /*
 	Get local ip of this RPI
 */
-func GetIP() (net.IP, error) {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
+func GetIP() (string, error) {
+	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		return nil, err
+		return "", nil
 	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-
-	return localAddr.IP, nil
+	for _, address := range addrs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String(), nil
+			}
+		}
+	}
+	return "", nil
+	//conn, err := net.Dial("udp", "8.8.8.8:80")
+	//if err != nil {
+	//	return nil, err
+	//}
+	//localAddr := conn.LocalAddr().(*net.UDPAddr)
+	//
+	//return localAddr.IP, nil
 }
 
 func AuthenticationToken() string {
@@ -63,8 +76,13 @@ func CheckForInternet() {
 		if err != nil {
 			log.Logger.Warn().Msgf("[X]\tError getting ip address: %s", err)
 		}
-		log.Logger.Info().Msgf("[!]\tIP is -> %s", ipstr.String())
-		defer conn.Close()
+		log.Logger.Info().Msgf("[!]\tIP is -> %s", ipstr)
+		defer func(conn net.Conn) {
+			err := conn.Close()
+			if err != nil {
+				log.Logger.Warn().Msgf("[X]\tError getting ip address: %s", err)
+			}
+		}(conn)
 	}
 }
 func UpdateSystem() {
