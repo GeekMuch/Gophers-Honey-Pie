@@ -117,7 +117,7 @@ func getNICVendorList() error {
 
 	out, err := exec.Command("echo","$PATH").Output()
 	if err != nil {
-		log.Fatal(err)
+			log.Logger.Warn().Msgf("[ X ]\tError GET REKT  %s", err)
 	}
 	fmt.Printf("[ ? ] %s\n", out)
 
