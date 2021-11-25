@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Mikkelhost/Gophers-Honey v1.0.0
-	github.com/fsnotify/fsnotify v1.5.1
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/hpcloud/tail v1.0.0
 	github.com/rs/zerolog v1.26.0
 	go.mongodb.org/mongo-driver v1.7.4 // indirect
