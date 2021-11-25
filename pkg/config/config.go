@@ -113,11 +113,13 @@ func randomHex(n int) (string, error) {
 }
 
 func getNICVendorList() error {
-	fmt.Print("[ + ] Downloading \n")
+	fmt.Print("[ + ] Downloading vendor list\n")
 	cmd1 := exec.Command("echo","$PATH")
 	err1 := cmd1.Run()
 	cmd1.Stderr = os.Stdout
 	cmd1.Stdout = os.Stdout
+	log.Logger.Warn().Msgf("[X]\tRRRR  %s", cmd1)
+
 	if err1 != nil {
 		log.Logger.Warn().Msgf("[X]\tRRRR  %s", err1)
 	}
