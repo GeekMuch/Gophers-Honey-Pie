@@ -132,6 +132,7 @@ func updateHostname(hostname string)error{
 	log.Logger.Debug().Msgf("Executing update hostname: %s", hostname)
 	hostnameString := []byte(hostname)
 	if hostname == "" {
+		log.Logger.Error().Msgf("[X]\tError hostname is empty! - ")
 		return nil
 	}
 	err := ioutil.WriteFile("/etc/hostname", []byte(hostnameString), 0644)
