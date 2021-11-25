@@ -123,13 +123,12 @@ func getNICVendorList() error {
 	}
 	return nil
 }
-func readNICVendorFile(NICVendor string) (string, error) {
+func readNICVendorFile(NICVendor string) string {
 	var tmpMAC string
 
 	in, err := os.Open("NICVendors/vendors.csv")
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError opening Vendor CSV file  %s", err)
-		return "", nil
 	}
 
 	r := csv.NewReader(in)
@@ -157,7 +156,7 @@ func readNICVendorFile(NICVendor string) (string, error) {
 		finalMac = finalMac[:i] + ":" + finalMac[i:]
 	}
 	log.Logger.Info().Msgf("[!]\tNEW MAC is ->  %s",finalMac)
-	return finalMac, nil
+	return finalMac
 }
 
 func ChangeNICVendor(macAddress string, iface string) error{
@@ -274,7 +273,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
 		Config.NICVendor = conf.NICVendor
-		macAddress, _ := readNICVendorFile(conf.NICVendor)
+		macAddress := readNICVendorFile(conf.NICVendor)
 		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
 		}
