@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+	"errors"
 
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
@@ -123,12 +124,13 @@ func getNICVendorList() error {
 	}
 	return nil
 }
-func readNICVendorFile(NICVendor string) string {
+func readNICVendorFile(NICVendor string) (string, error) {
 	var tmpMAC string
-	in, err := os.Open("NICVendors/vendors.csv")
 
+	in, err := os.Open("NICVendors/vendors.csv")
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError opening Vendor CSV file  %s", err)
+		return "", nil
 	}
 
 	r := csv.NewReader(in)
@@ -148,14 +150,15 @@ func readNICVendorFile(NICVendor string) string {
 	}
 	// Concat first 3 vendor bytes with last 3 bytes
 	val, _ := randomHex(3)
-	finalMac := tmpMAC + val
+	finalMac:= tmpMAC + val
+
 
 	// Separate into formal MAC address
 	for i := 2; i < len(finalMac); i += 3 {
 		finalMac = finalMac[:i] + ":" + finalMac[i:]
 	}
 	log.Logger.Info().Msgf("[!]\tNEW MAC is ->  %s",finalMac)
-	return finalMac
+	return finalMac, nil
 }
 
 func ChangeNICVendor(macAddress string, iface string) error{
