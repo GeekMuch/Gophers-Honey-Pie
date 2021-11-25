@@ -126,11 +126,12 @@ func getNICVendorList() error {
 	return nil
 }
 func readNICVendorFile(NICVendor string) string {
-	log.Logger.Info().Msgf("[*]\tReading NIC vendor list")
 
 	if err := getNICVendorList(); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
 	}
+
+	log.Logger.Info().Msgf("[*]\tReading NIC vendor list")
 
 	var tmpMAC string
 

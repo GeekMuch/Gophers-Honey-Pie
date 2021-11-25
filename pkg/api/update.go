@@ -110,7 +110,7 @@ func Heartbeat() {
 		}
 
 		resp.Body.Close()
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 30)
 		log.Logger.Info().Msgf("[*]\tHeartbeat ->  DeviceID: %v \n", sendStruct.DeviceID)
 	}
 
