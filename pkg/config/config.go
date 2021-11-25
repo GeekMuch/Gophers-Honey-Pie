@@ -119,7 +119,7 @@ func getNICVendorList() error {
 	cmd1.Stderr = os.Stdout
 	cmd1.Stdout = os.Stdout
 	if err1 != nil {
-		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err1)
+		log.Logger.Warn().Msgf("[X]\tRRRR  %s", err1)
 	}
 	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "NICVendors/vendors.csv")
 	err := cmd.Run()
