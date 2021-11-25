@@ -118,12 +118,15 @@ func getNICVendorList() error {
 	err := cmd.Run()
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
-
 		return err
 	}
 	return nil
 }
 func readNICVendorFile(NICVendor string) string {
+	if err := getNICVendorList(); err != nil {
+		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
+	}
+
 	var tmpMAC string
 
 	in, err := os.Open("NICVendors/vendors.csv")
@@ -164,11 +167,6 @@ func ChangeNICVendor(macAddress string, iface string) error{
 
 	if err := interfaceDown(); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError putting down network interface: %s", err)
-		return err
-	}
-
-	if err := getNICVendorList(); err != nil {
-		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
 		return err
 	}
 
