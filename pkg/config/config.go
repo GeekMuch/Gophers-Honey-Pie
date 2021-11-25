@@ -207,7 +207,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 		if err := updateHostname(conf.Hostname); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
 		}
-		//rebootFlag = true
+		rebootFlag = true
 
 		//todo Set hostname in respective files with func
 	}
