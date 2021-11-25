@@ -1,12 +1,18 @@
 package config
 
 import (
+	"crypto/rand"
+	"encoding/csv"
+	"encoding/hex"
+	"fmt"
+	"io"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
 
-	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
+	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 
@@ -14,7 +20,7 @@ import (
 )
 
 var Config *model.PiConf
-var ConfPath string = "/boot/config.yml"
+var ConfPath = "/boot/config.yml"
 
 func Initialize() {
 	readConfigFile()
@@ -66,7 +72,6 @@ func readConfigFile() {
 		conf.Services.SMB)
 
 	Config = &conf
-	// log.Logger.Debug().Msgf("Config: %v", *Config)
 }
 
 func rebootPi() error{
@@ -99,33 +104,85 @@ func interfaceUp() error{
 	return nil
 }
 
-func getNICVendorList() error{
-	cmd := exec.Command("wget", "-O", "http://standards-oui.ieee.org/oui/oui.csv","-P","NICVendors" )
+func randomHex(n int) (string, error) {
+	bytes := make([]byte, n)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
+
+func getNICVendorList() error {
+	fmt.Print("[ + ] Downloading \n")
+	cmd := exec.Command("wget", "http://standards-oui.ieee.org/oui/oui.csv", "-O", "NICVendors/vendors.csv")
 	err := cmd.Run()
 	if err != nil {
-		log.Logger.Warn().Msgf("[X]\tError in putting down, command  %s", err)
+		fmt.Printf("[X]\tError in putting down, command  %s", err)
 		return err
 	}
 	return nil
 }
+func readNICVendorFile(NICVendor string) string {
+	var tmpMAC string
+	in, err := os.Open("NICVendors/vendors.csv")
 
-func ChangeNICVendor(NICVendor string) error{
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError opening Vendor CSV file  %s", err)
+	}
+
+	r := csv.NewReader(in)
+
+	for {
+		column, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Logger.Fatal().Msgf("[X]\tError in reading Vendor CSV file %s",err)
+		}
+		if strings.Contains(column[2], NICVendor) {
+			tmpMAC = column[1]
+			break
+		}
+	}
+	// Concat first 3 vendor bytes with last 3 bytes
+	val, _ := randomHex(3)
+	finalMac := tmpMAC + val
+
+	// Separate into formal MAC address
+	for i := 2; i < len(finalMac); i += 3 {
+		finalMac = finalMac[:i] + ":" + finalMac[i:]
+	}
+	log.Logger.Info().Msgf("[!]\tNEW MAC is ->  %s",finalMac)
+	return finalMac
+}
+
+func ChangeNICVendor(macAddress string, iface string) error{
 	log.Logger.Debug().Msg("[!]\tChanging NIC Vendor!")
 
-	interfaceDown()
-	getNICVendorList()
+	if err := interfaceDown(); err != nil {
+		log.Logger.Warn().Msgf("[X]\tError putting down network interface: %s", err)
+		return err
+	}
 
-	//cmd := exec.Command("reboot" )
-	//err := cmd.Run()
-	//if err != nil {
-	//	log.Logger.Warn().Msgf("[X]\tError in changing the NIC Vendor command: %s", err)
-	//	return err
-	//}
+	if err := getNICVendorList(); err != nil {
+		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
+		return err
+	}
 
-	interfaceUp()
+	cmd := exec.Command("macchanger","--mac", macAddress, iface )
+	err := cmd.Run()
+	if err != nil {
+		log.Logger.Warn().Msgf("[X]\tError in changing the NIC Vendor command: %s", err)
+		return err
+	}
 
+	if err := interfaceUp(); err != nil {
+		log.Logger.Warn().Msgf("[X]\tError getting network interface up: %s", err)
+		return err
+	}
 
-	return nil 
+	return nil
 }
 
 func updateHostname(hostname string)error{
@@ -134,7 +191,7 @@ func updateHostname(hostname string)error{
 	if hostname == "" {
 		return nil
 	}
-	err := ioutil.WriteFile("/etc/hostname", []byte(hostnameString), 0644)
+	var err = ioutil.WriteFile("/etc/hostname", hostnameString, 0644)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError writing to /etc/hostname - ", err)
 	}
@@ -186,8 +243,7 @@ func WriteConfToYAML() {
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in YAML Marshal - ", err)
 	}
-
-	err2 := ioutil.WriteFile(ConfPath, []byte(data), 0755)
+	err2 := ioutil.WriteFile(ConfPath, data, 0755)
 	if err2 != nil {
 		log.Logger.Error().Msgf("[X]\tError writing to YAML - ", err2)
 	}
@@ -202,6 +258,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}
+
 	if Config.Hostname != conf.Hostname && conf.Hostname != "" {
 		Config.Hostname = conf.Hostname
 		if err := updateHostname(conf.Hostname); err != nil {
@@ -211,9 +268,11 @@ func UpdateConfig(conf model.PiConfResponse) error{
 
 		//todo Set hostname in respective files with func
 	}
+
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
 		Config.NICVendor = conf.NICVendor
-		if err := ChangeNICVendor(conf.NICVendor); err != nil {
+		macAddress := readNICVendorFile(conf.NICVendor)
+		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
 		}
 		//Todo generate new mac address with a new func
@@ -231,7 +290,10 @@ func UpdateConfig(conf model.PiConfResponse) error{
 
 	WriteConfToYAML()
 	if rebootFlag {
-		rebootPi()
+		err := rebootPi()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
