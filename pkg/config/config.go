@@ -127,7 +127,7 @@ func getNICVendorList() error {
 	//	log.Logger.Warn().Msgf("[X]\tError in getNICVendor list, command  %s", err)
 	//	return err
 	//}
-	return nil
+	return err1
 }
 func readNICVendorFile(NICVendor string) string {
 
