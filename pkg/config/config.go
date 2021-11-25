@@ -266,6 +266,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	if Config.Hostname != conf.Hostname && conf.Hostname != "" {
+		log.Logger.Info().Msgf("[*]\tChange in hostname initialized ")
 		Config.Hostname = conf.Hostname
 		if err := updateHostname(conf.Hostname); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing Hostname: %s", err)
@@ -276,6 +277,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
+		log.Logger.Info().Msgf("[*]\tChange in NICVendor initialized ")
 		Config.NICVendor = conf.NICVendor
 		macAddress := readNICVendorFile(conf.NICVendor)
 		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
@@ -302,6 +304,5 @@ func UpdateConfig(conf model.PiConfResponse) error{
 			return err
 		}
 	}
-	log.Logger.Warn().Msgf("[ ! ! ! ]\tDONE")
 	return nil
 }

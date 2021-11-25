@@ -63,7 +63,7 @@ func GetConfFromBackend() {
 				log.Logger.Warn().Msgf("[X]\tError updating opencanary: %s", err)
 			}
 		}
-		//log.Logger.Warn().Msgf("Response: %v", respStruct)
+		log.Logger.Warn().Msgf("[*]\t IP-address: %s", config.Config.IpStr)
 		log.Logger.Info().Msgf("[*]\tUpdated Services in config file from backend: " +
 			"\n\tHostname: \t%v " +
 			"\n\tNICVendor:\t%v " +
@@ -110,7 +110,7 @@ func Heartbeat() {
 		}
 
 		resp.Body.Close()
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 10)
 		log.Logger.Info().Msgf("[*]\tHeartbeat ->  DeviceID: %v \n", sendStruct.DeviceID)
 	}
 
