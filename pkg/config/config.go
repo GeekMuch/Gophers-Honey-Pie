@@ -115,12 +115,12 @@ func ChangeNICVendor(NICVendor string) error{
 	interfaceDown()
 	getNICVendorList()
 
-	cmd := exec.Command("reboot" )
-	err := cmd.Run()
-	if err != nil {
-		log.Logger.Warn().Msgf("[X]\tError in changing the NIC Vendor command: %s", err)
-		return err
-	}
+	//cmd := exec.Command("reboot" )
+	//err := cmd.Run()
+	//if err != nil {
+	//	log.Logger.Warn().Msgf("[X]\tError in changing the NIC Vendor command: %s", err)
+	//	return err
+	//}
 
 	interfaceUp()
 
@@ -198,7 +198,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	//todo revert to old conf if something fails.
 	//Making backup config
 	//config := Config
-	//var rebootFlag = false
+	var rebootFlag = false
 	if Config.DeviceID != conf.DeviceId {
 		Config.DeviceID = conf.DeviceId
 	}
@@ -230,8 +230,8 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	WriteConfToYAML()
-	//if rebootFlag {
-	//	rebootPi()
-	//}
+	if rebootFlag {
+		rebootPi()
+	}
 	return nil
 }
