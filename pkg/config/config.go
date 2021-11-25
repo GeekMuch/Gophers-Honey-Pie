@@ -274,7 +274,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
 		Config.NICVendor = conf.NICVendor
-		macAddress := readNICVendorFile(conf.NICVendor)
+		macAddress, _ := readNICVendorFile(conf.NICVendor)
 		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
 		}
