@@ -115,7 +115,7 @@ func randomHex(n int) (string, error) {
 func getNICVendorList() error {
 	fmt.Print("[ + ] Downloading vendor list\n")
 
-	out, err := exec.Command("echo","$PATH").Output()
+	out, err := exec.Command("pwd").Output()
 	if err != nil {
 			log.Logger.Warn().Msgf("[ X ]\tError GET REKT  %s", err)
 	}
