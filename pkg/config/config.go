@@ -11,7 +11,6 @@ import (
 	"os/exec"
 	"strings"
 	"time"
-	"errors"
 
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
