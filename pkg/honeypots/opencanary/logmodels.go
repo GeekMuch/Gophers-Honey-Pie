@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Log severity levels.
+// Logs severity levels.
 var (
 	CRITICAL      = 0
 	SCAN          = 1

@@ -7,11 +7,15 @@ import (
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
 
-func startChannel(logChannel *filewatcher.LogChannel) {
+func startListenerAndParser(logChannel *filewatcher.LogChannel) {
 	for {
 		select {
-		case msg := <-logChannel.Log:
-			log.Logger.Debug().Msgf("Log received from honeypot: %s", msg)
+		case msg := <-logChannel.Logs:
+			_, err := ParseOpenCanaryLog(msg)
+			if err != nil {
+				log.Logger.Error().Msgf("Error parsing log: %s", err)
+			}
+			// TODO: Send canaryLog to api call->backend.
 		}
 	}
 }
