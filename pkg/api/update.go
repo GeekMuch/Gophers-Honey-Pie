@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	opencanaryconfig "github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
-	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
+	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"net/http"
 	"time"
 
@@ -59,7 +59,12 @@ func GetConfFromBackend() {
 			time.Sleep(time.Second * 5)
 			goto getConf
 		}
-		resp.Body.Close()
+		err = resp.Body.Close()
+		if err != nil {
+			log.Logger.Error().Msgf("[X]\tError in response body close.\n[ERROR] -  \n", err)
+
+			return
+		}
 		log.Logger.Info().Msg("Updating config")
 		err = config.UpdateConfig(respStruct)
 		if err != nil {
@@ -127,7 +132,12 @@ func Heartbeat() {
 			goto loop
 		}
 
-		resp.Body.Close()
+		err = resp.Body.Close()
+		if err != nil {
+			log.Logger.Error().Msgf("[X]\tError in heartbeat response body.\n[ERROR] -  \n", err)
+
+			return
+		}
 		time.Sleep(time.Second * 30)
 		log.Logger.Info().Msgf("[*]\tHeartbeat ->  DeviceID: %v \n", sendStruct.DeviceID)
 	}
