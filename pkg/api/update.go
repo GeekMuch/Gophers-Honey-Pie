@@ -86,6 +86,7 @@ func GetConfFromBackend() {
 }
 
 func Heartbeat() {
+	loop:
 	for {
 		var bearer = config.AuthenticationToken()
 
@@ -99,6 +100,7 @@ func Heartbeat() {
 		req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
+			goto loop
 		}
 
 		req.Header.Add("Authorization", bearer)
@@ -107,6 +109,7 @@ func Heartbeat() {
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			goto loop
 		}
 
 		resp.Body.Close()
