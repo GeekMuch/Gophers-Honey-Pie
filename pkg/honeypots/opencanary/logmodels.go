@@ -1,10 +1,5 @@
 package opencanary
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
-)
-
 // Logs severity levels.
 var (
 	CRITICAL      = 0
@@ -91,19 +86,4 @@ type OpenCanaryLog struct {
 	Logdata OpenCanaryLogData `json:"logdata"`
 	LogType int               `json:"log_type"`
 	NodeID  string            `json:"node_id"`
-}
-
-type StandardLog struct {
-	GUID         primitive.ObjectID `bson:"_id,omitempty"`
-	DeviceID     uint32             `bson:"device_id,omitempty" json:"device_id"`
-	LogID        uint32             `bson:"log_id,omitempty" json:"log_id"`
-	DstHost      string             `bson:"dst_host" json:"dst_host"`
-	DstPort      uint16             `bson:"dst_port" json:"dst_port"`
-	SrcHost      string             `bson:"src_host" json:"src_host"`
-	SrcPort      uint16             `bson:"src_port" json:"src_port"`
-	LogTimeStamp time.Time          `bson:"log_time_stamp" json:"log_time_stamp"`
-	Message      string             `bson:"message,omitempty" json:"message"`
-	Level        int                `bson:"level" json:"level"`
-	LogType      string             `bson:"log_type" json:"log_type"`
-	RawLog       string             `bson:"raw_log" json:"raw_log"`
 }

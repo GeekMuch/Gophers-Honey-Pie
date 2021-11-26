@@ -30,7 +30,7 @@ func Initialize() error {
 
 	go func() {
 		log.Logger.Info().Msgf("Starting listener")
-		startOpenCanaryListenerAndParser(logChannel)
+		startChannelListener(logChannel)
 	}()
 
 	go func() {

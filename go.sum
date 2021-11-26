@@ -1,7 +1,7 @@
 4d63.com/gochecknoinits v0.0.0-20200108094044-eb73b47b9fc4/go.mod h1:4o1i5aXtIF5tJFt3UD1knCVmWOXg7fLYdHVu6jeNcnM=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/Mikkelhost/Gophers-Honey v1.0.0 h1:8vSaDmCbwWD4kxro6808mdc71Pwio4gzPgnitdfhtaE=
-github.com/Mikkelhost/Gophers-Honey v1.0.0/go.mod h1:UKufFn+EnxG3pio0ZCCAV89+63eHRUPRs7Qw1GNzjaw=
+github.com/Mikkelhost/Gophers-Honey v0.0.1 h1:wl0Tqvs7+GO2PHQxejSUlKOdmlZz01FKg8PYrExTb5U=
+github.com/Mikkelhost/Gophers-Honey v0.0.1/go.mod h1:UKufFn+EnxG3pio0ZCCAV89+63eHRUPRs7Qw1GNzjaw=
 github.com/coreos/go-systemd/v22 v22.3.2/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
