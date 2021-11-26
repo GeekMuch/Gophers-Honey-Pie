@@ -20,8 +20,7 @@ func GetConfFromBackend() {
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.DeviceAuth{
-			DeviceId:  config.Config.DeviceID,
-			DeviceKey: "XxPFUhQ8R7kKhpgubt7v"}
+			DeviceId:  config.Config.DeviceID}
 
 		postBody, _ := json.Marshal(sendStruct)
 
