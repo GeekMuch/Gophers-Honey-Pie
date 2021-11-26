@@ -27,6 +27,7 @@ func GetConfFromBackend() {
 
 		responseBody := bytes.NewBuffer(postBody)
 
+		log.Logger.Info().Msg("Creating http request for getDeviceConf")
 		// Create a new request using http
 		req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 		if err != nil {
@@ -38,6 +39,8 @@ func GetConfFromBackend() {
 		req.Header.Add("Authorization", bearer)
 
 		// Send req using http Client
+
+		log.Logger.Info().Msg("Sending http request")
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
@@ -47,7 +50,7 @@ func GetConfFromBackend() {
 		}
 
 		var respStruct model.PiConfResponse
-
+		log.Logger.Info().Msg("Decoding response")
 		decoder := json.NewDecoder(resp.Body)
 
 		if err := decoder.Decode(&respStruct); err != nil {
@@ -56,7 +59,7 @@ func GetConfFromBackend() {
 			goto getConf
 		}
 		resp.Body.Close()
-
+		log.Logger.Info().Msg("Updating config")
 		err = config.UpdateConfig(respStruct)
 		if err != nil {
 			log.Logger.Warn().Msgf("[X]\tError updating config", err)
