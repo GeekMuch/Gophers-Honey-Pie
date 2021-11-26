@@ -80,6 +80,7 @@ func GetConfFromBackend() {
 			}
 		}
 		log.Logger.Info().Msgf("[*]\tIP address: %s", config.Config.IpStr)
+		log.Logger.Info().Msgf("[*]\tIP address: %s", config.Config.Mac)
 		log.Logger.Info().Msgf("[*]\tUpdated Services in config file from backend: " +
 			"\n\tHostname: \t%v " +
 			"\n\tNICVendor:\t%v " +
