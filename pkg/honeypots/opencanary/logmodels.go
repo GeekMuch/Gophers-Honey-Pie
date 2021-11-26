@@ -20,8 +20,8 @@ var (
 		17001, 18001, 18002, 18003, 18004, 18005, 99000, 99001, 99002, 99003, 99004, 99005, 99006, 99007, 99008, 99009}
 )
 
-// OpencanaryLogTypes from https://github.com/thinkst/opencanary/blob/master/opencanary/logger.py
-var OpencanaryLogTypes = map[int]string{
+// OpenCanaryLogTypes from https://github.com/thinkst/opencanary/blob/master/opencanary/logger.py
+var OpenCanaryLogTypes = map[int]string{
 	1000:  "LOG_BASE_BOOT",
 	1001:  "LOG_BASE_MSG",
 	1002:  "LOG_BASE_DEBUG",
@@ -71,22 +71,26 @@ var OpencanaryLogTypes = map[int]string{
 	99009: "LOG_USER_9",
 }
 
-type OpencanaryLogData struct {
-	PASSWORD string `json:"PASSWORD"`
-	USERNAME string `json:"USERNAME"`
-	PROTO    string `json:"PROTO"`
-	Msg      string `json:"msg"`
+type OpenCanaryLogData struct {
+	PASSWORD string               `json:"PASSWORD"`
+	USERNAME string               `json:"USERNAME"`
+	PROTO    string               `json:"PROTO"`
+	Msg      OpenCanaryLogDataMsg `json:"msg,omitempty"`
 }
 
-type OpencanaryLog struct {
-	DstHost   string            `json:"dst_host"`
-	DstPort   uint16            `json:"dst_port"`
-	SrcHost   string            `json:"src_host"`
-	SrcPort   uint16            `json:"src_port"`
-	LocalTime time.Time         `json:"local_time"`
-	Logdata   OpencanaryLogData `json:"logdata"`
-	LogType   int               `json:"log_type"`
-	NodeID    string            `json:"node_id"`
+type OpenCanaryLogDataMsg struct {
+	LogData string `json:"logdata"`
+}
+
+type OpenCanaryLog struct {
+	DstHost string            `json:"dst_host"`
+	DstPort int32             `json:"dst_port"`
+	SrcHost string            `json:"src_host"`
+	SrcPort int32             `json:"src_port"`
+	UTCTime string            `json:"utc_time"`
+	Logdata OpenCanaryLogData `json:"logdata"`
+	LogType int               `json:"log_type"`
+	NodeID  string            `json:"node_id"`
 }
 
 type StandardLog struct {

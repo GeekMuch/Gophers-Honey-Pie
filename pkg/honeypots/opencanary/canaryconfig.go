@@ -11,6 +11,8 @@ import (
 )
 
 var CanaryConfPath = "/etc/opencanaryd/opencanary.conf" //"boot/opencanary.conf"
+var CanaryOffsetPath = "/etc/opencanaryd/offset.txt"
+var CanaryLogPath = "/var/tmp/opencanary.log"
 var conf *canaryConf
 
 func Initialize() error {
@@ -28,12 +30,12 @@ func Initialize() error {
 
 	go func() {
 		log.Logger.Info().Msgf("Starting listener")
-		startListenerAndParser(logChannel)
+		startOpenCanaryListenerAndParser(logChannel)
 	}()
 
 	go func() {
 		log.Logger.Info().Msgf("Starting OpenCanary filewatcher")
-		err := filewatcher.StartNewFileWatcher("/var/tmp/opencanary.log", "/home/zinja/offset.txt", logChannel)
+		err := filewatcher.StartNewFileWatcher(CanaryLogPath, CanaryOffsetPath, logChannel)
 		if err != nil {
 			log.Logger.Error().Msgf("Filewatcher error: %s", err)
 		}

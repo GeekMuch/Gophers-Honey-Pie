@@ -5,9 +5,12 @@ import (
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/filewatcher"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	"time"
 )
 
-func startListenerAndParser(logChannel *filewatcher.LogChannel) {
+// startOpenCanaryListenerAndParser is used to listen on the given log channel and
+// parse the results to the OpenCanary parser.
+func startOpenCanaryListenerAndParser(logChannel *filewatcher.LogChannel) {
 	for {
 		select {
 		case msg := <-logChannel.Logs:
@@ -15,6 +18,7 @@ func startListenerAndParser(logChannel *filewatcher.LogChannel) {
 			if err != nil {
 				log.Logger.Error().Msgf("Error parsing log: %s", err)
 			}
+			// TOOO: FIFO channel for log sending redundancy.
 			// TODO: Send canaryLog to api call->backend.
 		}
 	}
@@ -24,7 +28,7 @@ func startListenerAndParser(logChannel *filewatcher.LogChannel) {
 // into a standardized log format.
 func ParseOpenCanaryLog(jsonLog string) (StandardLog, error) {
 	var standardLog StandardLog
-	var opencanaryLog OpencanaryLog
+	var opencanaryLog OpenCanaryLog
 
 	err := json.Unmarshal([]byte(jsonLog), &opencanaryLog)
 	if err != nil {
@@ -39,14 +43,30 @@ func ParseOpenCanaryLog(jsonLog string) (StandardLog, error) {
 		return StandardLog{}, err
 	}
 
+	// Parse log local time to RFC3339 format.
+	parsedLogTime, err := time.Parse("2006-01-02 15:04:05.9", opencanaryLog.UTCTime)
+	if err != nil {
+		log.Logger.Error().Msgf("Error parsing log local time: %s", err)
+		return StandardLog{}, err
+	}
+	log.Logger.Debug().Msgf(parsedLogTime.String())
+
 	// Parse to standardized log format.
 	standardLog.DeviceID = config.Config.DeviceID
 	standardLog.LogID = 0 // LogID is set by the backend.
 	standardLog.DstHost = opencanaryLog.DstHost
-	standardLog.DstPort = opencanaryLog.DstPort
+	if opencanaryLog.DstPort < 0 {
+		standardLog.DstPort = 0
+	} else {
+		standardLog.DstPort = uint16(opencanaryLog.DstPort)
+	}
 	standardLog.SrcHost = opencanaryLog.SrcHost
-	standardLog.SrcPort = opencanaryLog.SrcPort
-	standardLog.LogTimeStamp = opencanaryLog.LocalTime
+	if opencanaryLog.SrcPort < 0 {
+		standardLog.SrcPort = 0
+	} else {
+		standardLog.SrcPort = uint16(opencanaryLog.SrcPort)
+	}
+	standardLog.LogTimeStamp = parsedLogTime
 	standardLog.Message = string(logdataMarshalled)
 	// Get severity level of log type.
 	standardLog.Level, err = getOpenCanaryLogLevel(opencanaryLog.LogType)
@@ -54,7 +74,7 @@ func ParseOpenCanaryLog(jsonLog string) (StandardLog, error) {
 		log.Logger.Warn().Msgf("Error getting severity level: %s", err)
 		return StandardLog{}, err
 	}
-	standardLog.LogType = OpencanaryLogTypes[opencanaryLog.LogType]
+	standardLog.LogType = OpenCanaryLogTypes[opencanaryLog.LogType]
 	// Include raw opencanary log for storage.
 	standardLog.RawLog = jsonLog
 

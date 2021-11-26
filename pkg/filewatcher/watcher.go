@@ -34,6 +34,11 @@ func StartNewFileWatcher(logFilepath, offsetFilepath string, logChannel *LogChan
 		}
 	} else {
 		offset = 0
+		err = saveOffsetToFile(offsetFilepath, offset)
+		if err != nil {
+			log.Logger.Error().Msgf("Error saving offset to offset file: %s", err)
+			return err
+		}
 	}
 
 	for line := range tailFile.Lines {
