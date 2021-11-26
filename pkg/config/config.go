@@ -23,7 +23,7 @@ var ConfPath = "/boot/config.yml"
 
 func Initialize() {
 	readConfigFile()
-	ChangeNICVendor(Config.Mac, "eth0")
+
 	CheckForInternet()
 	CheckForC2Server(Config.C2)
 	ip, err := GetIP()
