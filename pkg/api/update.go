@@ -16,6 +16,7 @@ func GetConfFromBackend() {
 	getConf:
 	for {
 		// Create a Bearer string by appending string access token
+		log.Logger.Info().Msg("Start of GetConfFromBackend loop")
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.DeviceAuth{
@@ -86,8 +87,9 @@ func GetConfFromBackend() {
 			respStruct.Services.HTTP,
 			respStruct.Services.HTTPS,
 			respStruct.Services.SMB)
-
+		log.Logger.Info().Msg("End of GetConfFromBackend loop before sleep")
 		time.Sleep(time.Second * 10)
+		log.Logger.Info().Msg("End of GetConfFromBackend loop after sleep")
 	}
 }
 
