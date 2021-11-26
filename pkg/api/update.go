@@ -13,6 +13,7 @@ import (
 )
 
 func GetConfFromBackend() {
+	getConf:
 	for {
 		// Create a Bearer string by appending string access token
 		var bearer = config.AuthenticationToken()
@@ -29,7 +30,7 @@ func GetConfFromBackend() {
 		req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 		if err != nil {
 			log.Logger.Info().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
-
+			goto getConf
 		}
 		// add authorization header to the req
 		req.Header.Add("Authorization", bearer)
@@ -39,6 +40,7 @@ func GetConfFromBackend() {
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			goto getConf
 		}
 
 		var respStruct model.PiConfResponse
@@ -47,6 +49,7 @@ func GetConfFromBackend() {
 
 		if err := decoder.Decode(&respStruct); err != nil {
 			log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
+			goto getConf
 		}
 		resp.Body.Close()
 
