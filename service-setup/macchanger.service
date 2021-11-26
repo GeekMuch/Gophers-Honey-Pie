@@ -1,0 +1,16 @@
+[Unit]
+Description=changes mac for %I
+Wants=network.target
+Before=network.target
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+User=root
+WorkingDirectory=/home/pi/Gophers-Honey-Pie
+Type=oneshot
+ExecStart=/home/pi/Gophers-Honey-Pie/gophers-start.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

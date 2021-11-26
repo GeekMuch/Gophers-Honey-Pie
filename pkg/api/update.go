@@ -81,7 +81,7 @@ func GetConfFromBackend() {
 			"\n\tNICVendor:\t%v " +
 			"\n\tDeviceID:\t%v " +
 			"\n\tStatus:\t%v " +
-			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
+			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tSMB:\t%v \n",
 			respStruct.Hostname,
 			respStruct.NICVendor,
 			respStruct.DeviceId,
@@ -90,7 +90,6 @@ func GetConfFromBackend() {
 			respStruct.Services.FTP,
 			respStruct.Services.TELNET,
 			respStruct.Services.HTTP,
-			respStruct.Services.HTTPS,
 			respStruct.Services.SMB)
 		log.Logger.Info().Msg("End of GetConfFromBackend loop before sleep")
 		time.Sleep(time.Second * 10)

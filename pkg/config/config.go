@@ -23,7 +23,6 @@ var ConfPath = "/boot/config.yml"
 
 func Initialize() {
 	readConfigFile()
-
 	CheckForInternet()
 	CheckForC2Server(Config.C2)
 	ip, err := GetIP()
@@ -36,6 +35,10 @@ func Initialize() {
 		//todo update database on backend
 
 	}
+	if err := getNICVendorList(); err != nil {
+		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
+	}
+
 }
 
 func readConfigFile() {
@@ -63,15 +66,15 @@ func readConfigFile() {
 		conf.DeviceID,
 		conf.DeviceKey)
 
-	log.Logger.Info().Msgf("[*]\tUpdated Services in config file: \n\t\tFTP:\t%v \n\t\tSSH:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
+	log.Logger.Info().Msgf("[*]\tUpdated Services in config file: \n\t\tFTP:\t%v \n\t\tSSH:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tSMB:\t%v \n",
 		conf.Services.FTP,
 		conf.Services.SSH,
 		conf.Services.TELNET,
 		conf.Services.HTTP,
-		conf.Services.HTTPS,
 		conf.Services.SMB)
 
 	Config = &conf
+
 }
 
 func rebootPi() error{
@@ -130,10 +133,6 @@ func getNICVendorList() error {
 }
 
 func readNICVendorFile(NICVendor string) (string, error) {
-
-	if err := getNICVendorList(); err != nil {
-		log.Logger.Warn().Msgf("[X]\tError getting vendor list: %s", err)
-	}
 
 	log.Logger.Info().Msgf("[*]\tReading NIC vendor list")
 
