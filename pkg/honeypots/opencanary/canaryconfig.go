@@ -144,7 +144,7 @@ func UpdateCanary(conf model.PiConfResponse) error {
 		log.Logger.Warn().Msgf("[X]\tError stopping opencanary: %s", err)
 	}
 	if err := writeToCanaryConfigFile(conf); err != nil {
-		log.Logger.Warn().Msgf("[X]\tError writing to canary conf: %s", err)
+		log.Logger.Warn().Msgf("[X]\tError writing to opencanary conf: %s", err)
 	}
 	if err := startCanary(); err != nil {
 		log.Logger.Warn().Msgf("[X]\tError starting opencanary: %s", err)
