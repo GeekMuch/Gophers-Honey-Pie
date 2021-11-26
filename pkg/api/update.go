@@ -41,7 +41,9 @@ func GetConfFromBackend() {
 		// Send req using http Client
 
 		log.Logger.Info().Msg("Sending http request")
-		client := &http.Client{}
+		client := &http.Client{
+			Timeout: time.Second*3,
+		}
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
@@ -117,7 +119,9 @@ func Heartbeat() {
 
 		req.Header.Add("Authorization", bearer)
 		// Send req using http Client
-		client := &http.Client{}
+		client := &http.Client{
+			Timeout: time.Second*3,
+		}
 		resp, err := client.Do(req)
 		if err != nil {
 			log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
