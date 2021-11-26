@@ -144,6 +144,7 @@ func readNICVendorFile(NICVendor string) (string, error) {
 	r := csv.NewReader(in)
 
 	for {
+		log.Logger.Debug().Msgf("Hit Keeps going")
 		column, err := r.Read()
 		if err == io.EOF {
 			break
