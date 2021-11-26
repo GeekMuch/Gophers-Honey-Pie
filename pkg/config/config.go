@@ -147,6 +147,7 @@ func readNICVendorFile(NICVendor string) (string, error) {
 		log.Logger.Debug().Msgf("Hit Keeps going")
 		column, err := r.Read()
 		if err == io.EOF {
+			log.Logger.Warn().Msgf("[X]\tError in reading Vendor CSV file, Vendor does not exist %s",err)
 			break
 		}
 		if err != nil {
