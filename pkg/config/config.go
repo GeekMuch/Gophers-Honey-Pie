@@ -280,7 +280,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 	}
 
 	if Config.NICVendor != conf.NICVendor && conf.NICVendor != "" {
-		log.Logger.Info().Msgf("[ ! ]\tChange in NICVendor initialized\n")
+		log.Logger.Info().Msgf("[ ! ] Change in NICVendor initialized\n")
 		Config.NICVendor = conf.NICVendor
 		macAddress, _ := readNICVendorFile(conf.NICVendor)
 		if len(macAddress) < 12{
@@ -291,6 +291,8 @@ func UpdateConfig(conf model.PiConfResponse) error{
 			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
 			return err
 		}
+		Config.Mac = macAddress
+
 		//Todo generate new mac address with a new func
 	}
 
