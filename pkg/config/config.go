@@ -23,6 +23,7 @@ var ConfPath = "/boot/config.yml"
 
 func Initialize() {
 	readConfigFile()
+	ChangeNICVendor(Config.Mac, "eth0")
 	CheckForInternet()
 	CheckForC2Server(Config.C2)
 	ip, err := GetIP()
@@ -84,6 +85,7 @@ func rebootPi() error{
 	}
 	return nil
 }
+
 func interfaceDown(iface string) error{
 	log.Logger.Info().Msgf("[*]\tPutting Network interface %s DOWN", iface)
 
@@ -95,6 +97,7 @@ func interfaceDown(iface string) error{
 	}
 	return nil
 }
+
 func interfaceUp(iface string) error{
 	log.Logger.Info().Msgf("[*]\tPutting Network interface %s UP", iface)
 	cmd := exec.Command("ifconfig", "eth0", "up" )
@@ -125,6 +128,7 @@ func getNICVendorList() error {
 	}
 	return nil
 }
+
 func readNICVendorFile(NICVendor string) (string, error) {
 
 	if err := getNICVendorList(); err != nil {
@@ -144,7 +148,6 @@ func readNICVendorFile(NICVendor string) (string, error) {
 	r := csv.NewReader(in)
 
 	for {
-		log.Logger.Debug().Msgf("Hit Keeps going")
 		column, err := r.Read()
 		if err == io.EOF {
 			log.Logger.Warn().Msgf("[X]\tError in reading Vendor CSV file, Vendor does not exist %s",err)
