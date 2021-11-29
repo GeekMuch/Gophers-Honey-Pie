@@ -16,16 +16,17 @@ var CanaryLogPath = "/var/tmp/opencanary.log"
 var conf *canaryConf
 
 func Initialize() error {
-	// err := readFromCanaryConfig()
-	// if err != nil {
-	// 	return err
-	// }
-	// _ = stopCanary()
-	// err = startCanary()
-	// if err != nil {
-	// 	log.Logger.Error().Msgf("Error starting OpenCanary: %s", err)
-	// 	return err
-	// }
+	err := readFromCanaryConfig()
+	if err != nil {
+		return err
+	}
+	_ = stopCanary()
+	err = startCanary()
+	if err != nil {
+		log.Logger.Error().Msgf("Error starting OpenCanary: %s", err)
+		return err
+	}
+
 	logChannel := filewatcher.NewLogChannel("OpenCanaryChannel")
 
 	go func() {

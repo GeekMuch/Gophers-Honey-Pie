@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots"
 	"sync"
 
@@ -17,11 +19,11 @@ func main() {
 	var wg sync.WaitGroup
 
 	log.InitLog(true)
-	// config.Initialize()
-	// if !config.CheckIfDeviceIDExits() {
-	// 	api.RegisterDevice()
-	// 	log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
-	// }
+	config.Initialize()
+	if !config.CheckIfDeviceIDExits() {
+		api.RegisterDevice()
+		log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
+	}
 
 	log.Logger.Info().Msgf("[+]\t Initializing honeypots")
 	if err := honeypots.Initialize(); err != nil {
@@ -30,16 +32,12 @@ func main() {
 	}
 
 	wg.Add(1)
-	go func() {
-		log.Logger.Info().Msgf("Test")
-		for {
-		}
-	}()
+	go api.GetConfFromBackend()
+
+	wg.Add(1)
+	go api.Heartbeat()
 
 	wg.Wait()
-	// go api.GetConfFromBackend()
-	// go api.Heartbeat()
-	// wg.Wait()
 	// api.GetDeviceIDFromAPI()
 	// config.AddDeviceIDtoYAML()
 	// config.StartSetupSequence()
