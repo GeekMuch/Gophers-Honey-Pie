@@ -54,12 +54,11 @@ func readConfigFile() {
 		conf.DeviceID,
 		conf.DeviceKey)
 
-	log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tFTP:\t%v \n\t\tSSH:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
+	log.Logger.Info().Msgf("[*] Updated Services in config file: \n\t\tFTP:\t%v \n\t\tSSH:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tSMB:\t%v \n",
 		conf.Services.FTP,
 		conf.Services.SSH,
 		conf.Services.TELNET,
 		conf.Services.HTTP,
-		conf.Services.HTTPS,
 		conf.Services.SMB)
 
 	Config = &conf
@@ -93,7 +92,7 @@ func WriteConfToYAML() {
 	log.Logger.Info().Msgf("[!] Device ID is: %v", Config.DeviceID)
 }
 
-func UpdateConfig(conf model.PiConfResponse) error{
+func UpdateConfig(conf model.PiConfResponse) error {
 	//todo revert to old conf if something fails.
 	//Making backup config
 	//config := Config
@@ -114,7 +113,7 @@ func UpdateConfig(conf model.PiConfResponse) error{
 		return err
 	}
 
-	if Config.IpStr != ip.String(){
+	if Config.IpStr != ip.String() {
 		Config.IpStr = ip.String()
 		//todo Make and update ip in backend
 	}

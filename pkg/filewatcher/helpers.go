@@ -2,7 +2,7 @@ package filewatcher
 
 import (
 	"fmt"
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"io"
 	"os"
 	"runtime"
@@ -10,26 +10,23 @@ import (
 
 // getOffsetFromFile fetches the offset value stored in the given file.
 func getOffsetFromFile(filepath string) (uint32, error) {
-	file, err := os.OpenFile(filepath, os.O_RDONLY, 0644)
-	if err != nil {
-		logger.Logger.Error().Msgf("Error closing offset file: %s", err)
-	}
+	file, _ := os.OpenFile(filepath, os.O_RDONLY, 0644)
 	defer func(file *os.File) {
-		err = file.Close()
+		err := file.Close()
 		if err != nil {
-			logger.Logger.Error().Msgf("Error closing offset file: %s", err)
+			log.Logger.Error().Msgf("Error closing offset file: %s", err)
 		}
 	}(file)
 
 	var offset uint32
 
 	for {
-		_, err = fmt.Fscanf(file, "%d", &offset)
+		_, err := fmt.Fscanf(file, "%d", &offset)
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
-			logger.Logger.Error().Msgf("Scanning offset from file: %s", err)
+			log.Logger.Error().Msgf("Scanning offset from file: %s", err)
 			return offset, err
 		}
 	}
@@ -39,7 +36,10 @@ func getOffsetFromFile(filepath string) (uint32, error) {
 
 // saveOffsetToFile saves the given offset to the given file.
 func saveOffsetToFile(filepath string, offset uint32) error {
-	file, err := os.OpenFile(filepath, os.O_WRONLY, 0644)
+	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Logger.Error().Msgf("Error opening offset file: %s", err)
+	}
 	defer func(file *os.File) {
 		err = file.Close()
 		if err != nil {
@@ -48,13 +48,13 @@ func saveOffsetToFile(filepath string, offset uint32) error {
 	}(file)
 
 	if err != nil {
-		logger.Logger.Error().Msgf("Error opening offset file: %s", err)
+		log.Logger.Error().Msgf("Error opening offset file: %s", err)
 		return err
 	}
 
 	_, err = file.WriteAt([]byte(fmt.Sprint(offset)), 0)
 	if err != nil {
-		logger.Logger.Error().Msgf("Error writing to offset file: %s", err)
+		log.Logger.Error().Msgf("Error writing to offset file: %s", err)
 		return err
 	}
 
@@ -71,14 +71,15 @@ func resetOffsetFile(filepath string) error {
 	return nil
 }
 
-// fileExists checks if a file exists and is not a directory before we
-// try using it to prevent further errors.
+// fileExists checks if a file exists.
 func fileExists(filepath string) bool {
-	info, err := os.Stat(filepath)
+	_, err := os.Stat(filepath)
 	if os.IsNotExist(err) {
+		log.Logger.Info().Msgf("file does not exists")
 		return false
 	}
-	return !info.IsDir()
+	log.Logger.Info().Msgf("file exists")
+	return true
 }
 
 // enableFilePolling checks for OS type at runtime and enables/disables
@@ -88,12 +89,12 @@ func enableFilePolling() bool {
 	currentOS := runtime.GOOS
 	switch currentOS {
 	case "windows":
-		logger.Logger.Debug().Msgf("Windows detected. Using polling")
+		log.Logger.Debug().Msgf("Windows detected. Using polling")
 		return true
 	case "linux":
-		logger.Logger.Debug().Msgf("Linux detected. Using inotify/fsnotify")
+		log.Logger.Debug().Msgf("Linux detected. Using inotify/fsnotify")
 		return false
 	}
-	logger.Logger.Warn().Msgf("Error getting OS. Using default polling setting")
+	log.Logger.Warn().Msgf("Error getting OS. Using default polling setting")
 	return false
 }

@@ -3,11 +3,11 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	opencanaryconfig "github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
+	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"net/http"
 	"time"
-	opencanaryconfig "github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
-	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
-	model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
 
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 )
@@ -18,8 +18,8 @@ func GetConfFromBackend() {
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.DeviceAuth{
-			DeviceId:  config.Config.DeviceID,
-			DeviceKey: "XxPFUhQ8R7kKhpgubt7v"}
+			DeviceId: config.Config.DeviceID,
+		}
 
 		postBody, _ := json.Marshal(sendStruct)
 
@@ -28,7 +28,7 @@ func GetConfFromBackend() {
 		// Create a new request using http
 		req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 		if err != nil {
-			log.Logger.Info().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] -  \n", err)
 
 		}
 		// add authorization header to the req
@@ -64,12 +64,12 @@ func GetConfFromBackend() {
 			}
 		}
 		//log.Logger.Warn().Msgf("Response: %v", respStruct)
-		log.Logger.Info().Msgf("[*] Updated Services in config file from backend: " +
-			"\n\tHostname: \t%v " +
-			"\n\tNICVendor:\t%v " +
-			"\n\tDeviceID:\t%v " +
-			"\n\tStatus:\t%v " +
-			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tHTTPS:\t%v \n\t\tSMB:\t%v \n",
+		log.Logger.Info().Msgf("[*] Updated Services in config file from backend: "+
+			"\n\tHostname: \t%v "+
+			"\n\tNICVendor:\t%v "+
+			"\n\tDeviceID:\t%v "+
+			"\n\tStatus:\t%v "+
+			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v	 \n\t\tSMB:\t%v \n",
 			respStruct.Hostname,
 			respStruct.NICVendor,
 			respStruct.DeviceId,
@@ -78,7 +78,6 @@ func GetConfFromBackend() {
 			respStruct.Services.FTP,
 			respStruct.Services.TELNET,
 			respStruct.Services.HTTP,
-			respStruct.Services.HTTPS,
 			respStruct.Services.SMB)
 
 		time.Sleep(time.Second * 10)
@@ -90,7 +89,8 @@ func Heartbeat() {
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.Heartbeat{
-		DeviceID: config.Config.DeviceID}
+			DeviceID: config.Config.DeviceID,
+		}
 
 		postBody, _ := json.Marshal(sendStruct)
 

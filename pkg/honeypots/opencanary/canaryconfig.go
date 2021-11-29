@@ -3,17 +3,16 @@ package opencanary
 import (
 	"encoding/json"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/filewatcher"
+	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"io/ioutil"
-	"os/exec"
-
-	//"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"os"
-	// model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
-	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	"os/exec"
 )
 
 var CanaryConfPath = "/etc/opencanaryd/opencanary.conf" //"boot/opencanary.conf"
+var CanaryOffsetPath = "/etc/opencanaryd/offset.txt"
+var CanaryLogPath = "/var/tmp/opencanary.log"
 var conf *canaryConf
 
 func Initialize() error {
@@ -24,18 +23,25 @@ func Initialize() error {
 	_ = stopCanary()
 	err = startCanary()
 	if err != nil {
-		log.Logger.Error().Msgf("Error starting opencanary: %s", err)
+		log.Logger.Error().Msgf("Error starting OpenCanary: %s", err)
 		return err
 	}
 
-	logChannel := filewatcher.NewLogChannel()
-	go startChannel(logChannel)
+	logChannel := filewatcher.NewLogChannel("OpenCanaryChannel")
+
 	go func() {
-		err = filewatcher.StartNewFileWatcher("/var/tmp/opencanary.log", "/home/zinja/offset.txt", logChannel)
+		log.Logger.Info().Msgf("Starting listener")
+		startChannelListener(logChannel)
+	}()
+
+	go func() {
+		log.Logger.Info().Msgf("Starting OpenCanary filewatcher")
+		err := filewatcher.StartNewFileWatcher(CanaryLogPath, CanaryOffsetPath, logChannel)
 		if err != nil {
 			log.Logger.Error().Msgf("Filewatcher error: %s", err)
 		}
 	}()
+
 	return nil
 }
 
