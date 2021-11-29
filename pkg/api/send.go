@@ -36,12 +36,13 @@ func SendLog(standardLog model.Log) {
 	response, err := client.Do(request)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		log.Logger.Debug().Msgf("Attempting to resend log")
 		SendLog(standardLog)
 	}
-	defer func() {
-		err = response.Body.Close()
-		if err != nil {
-			log.Logger.Error().Msgf("[X]\tError closing response body.\n[ERROR] -  \n", err)
-		}
-	}()
+
+	err = response.Body.Close()
+	if err != nil {
+		log.Logger.Error().Msgf("[X]\tError closing response body.\n[ERROR] -  \n", err)
+	}
+
 }

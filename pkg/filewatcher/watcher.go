@@ -43,7 +43,7 @@ func StartNewFileWatcher(logFilepath, offsetFilepath string, logChannel *LogChan
 
 	for line := range tailFile.Lines {
 		if index >= offset {
-			log.Logger.Info().Msgf("New line in log: %s", line.Text)
+			log.Logger.Trace().Msgf("New line in log: %s", line.Text)
 			// Send log line to log channel.
 			logChannel.Logs <- line.Text
 			offset++
@@ -56,7 +56,7 @@ func StartNewFileWatcher(logFilepath, offsetFilepath string, logChannel *LogChan
 		index++
 	}
 
-	// Wait for more changes
+	// Wait for more changes.
 	err = tailFile.Wait()
 	if err != nil {
 		log.Logger.Error().Msgf("Tailfile wait error: %s", err)
