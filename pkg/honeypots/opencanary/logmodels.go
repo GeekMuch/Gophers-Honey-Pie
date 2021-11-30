@@ -69,9 +69,9 @@ var OpenCanaryLogTypes = map[int]string{
 }
 
 type OpenCanaryLogData struct {
-	PASSWORD string               `json:"PASSWORD"`
-	USERNAME string               `json:"USERNAME"`
-	PROTO    string               `json:"PROTO"`
+	PASSWORD string               `json:"PASSWORD,omitempty"`
+	USERNAME string               `json:"USERNAME,omitempty"`
+	PROTO    string               `json:"PROTO,omitempty"`
 	Msg      OpenCanaryLogDataMsg `json:"msg,omitempty"`
 }
 
