@@ -16,28 +16,31 @@ import (
 	Runs functions in order.
 */
 func main() {
+	var wg sync.WaitGroup
+
 	log.InitLog(true)
 	config.Initialize()
 	if !config.CheckIfDeviceIDExits() {
 		api.RegisterDevice()
 		log.Logger.Info().Msgf("[+]\tFirst time configuration [DONE]")
 	}
+
+	log.Logger.Info().Msgf("[+]\t Initializing honeypots")
 	if err := honeypots.Initialize(); err != nil {
 		log.Logger.Fatal().Msgf("Error initializing honeypots: %s", err)
 		return
 	}
-	var wg sync.WaitGroup
 
 	wg.Add(1)
 	go func() {
 		api.GetConfFromBackend()
-		log.Logger.Warn().Msgf("GetConfFromBackend goroutine done")
+		log.Logger.Info().Msgf("GetConfFromBackend goroutine done")
 		wg.Done()
 	}()
 	wg.Add(1)
 	go func() {
 		api.Heartbeat()
-		log.Logger.Warn().Msgf("Heartbeat goroutine done")
+		log.Logger.Info().Msgf("Heartbeat goroutine done")
 		wg.Done()
 	}()
 	//opencanary.ReadFromToCanaryConfig()

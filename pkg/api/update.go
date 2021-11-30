@@ -20,7 +20,8 @@ func GetConfFromBackend() {
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.DeviceAuth{
-			DeviceId:  config.Config.DeviceID}
+			DeviceId: config.Config.DeviceID,
+		}
 
 		postBody, _ := json.Marshal(sendStruct)
 
@@ -30,7 +31,7 @@ func GetConfFromBackend() {
 		// Create a new request using http
 		req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 		if err != nil {
-			log.Logger.Info().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+			log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] -  \n", err)
 			time.Sleep(time.Second * 5)
 			goto getConf
 		}
@@ -81,12 +82,12 @@ func GetConfFromBackend() {
 		}
 		log.Logger.Info().Msgf("[*]\tIP address: %s", config.Config.IpStr)
 		log.Logger.Info().Msgf("[*]\tMAC address: %s", config.Config.Mac)
-		log.Logger.Info().Msgf("[*]\tUpdated Services in config file from backend: " +
-			"\n\tHostname: \t%v " +
-			"\n\tNICVendor:\t%v " +
-			"\n\tDeviceID:\t%v " +
-			"\n\tStatus:\t%v " +
-			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v \n\t\tSMB:\t%v \n",
+		log.Logger.Info().Msgf("[*]\tUpdated Services in config file from backend: "+
+			"\n\tHostname: \t%v "+
+			"\n\tNICVendor:\t%v "+
+			"\n\tDeviceID:\t%v "+
+			"\n\tStatus:\t%v "+
+			"\n\t\tSSH:\t%v \n\t\tFTP:\t%v \n\t\tTELNET:\t%v \n\t\tHTTP:\t%v	 \n\t\tSMB:\t%v \n",
 			respStruct.Hostname,
 			respStruct.NICVendor,
 			respStruct.DeviceId,
@@ -108,7 +109,8 @@ func Heartbeat() {
 		var bearer = config.AuthenticationToken()
 
 		sendStruct := &model.Heartbeat{
-		DeviceID: config.Config.DeviceID}
+			DeviceID: config.Config.DeviceID,
+		}
 
 		postBody, _ := json.Marshal(sendStruct)
 

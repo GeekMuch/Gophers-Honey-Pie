@@ -1,9 +1,8 @@
 package logger
 
 import (
-	"os"
-
 	"github.com/rs/zerolog"
+	"os"
 )
 
 var Logger zerolog.Logger

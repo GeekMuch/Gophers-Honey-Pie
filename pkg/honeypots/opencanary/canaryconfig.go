@@ -2,30 +2,46 @@ package opencanary
 
 import (
 	"encoding/json"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/filewatcher"
+	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"io/ioutil"
-	"os/exec"
-
-	//"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"os"
-	// model "github.com/Mikkelhost/Gophers-Honey/pkg/model"
-	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	"os/exec"
 )
 
 var CanaryConfPath = "/etc/opencanaryd/opencanary.conf" //"boot/opencanary.conf"
+var CanaryOffsetPath = "/etc/opencanaryd/offset.txt"
+var CanaryLogPath = "/var/tmp/opencanary.log"
 var conf *canaryConf
 
-func Initialize() error{
+func Initialize() error {
 	err := readFromCanaryConfig()
 	if err != nil {
 		return err
 	}
-	stopCanary()
+	_ = stopCanary()
 	err = startCanary()
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError starting opencanary: %s", err)
+		log.Logger.Error().Msgf("[X]\tError starting OpenCanary: %s", err)
 		return err
 	}
+	
+	logChannel := filewatcher.NewLogChannel("OpenCanaryChannel")
+
+	go func() {
+		log.Logger.Info().Msgf("Starting listener")
+		startChannelListener(logChannel)
+	}()
+
+	go func() {
+		log.Logger.Info().Msgf("Starting OpenCanary filewatcher")
+		err := filewatcher.StartNewFileWatcher(CanaryLogPath, CanaryOffsetPath, logChannel)
+		if err != nil {
+			log.Logger.Error().Msgf("Filewatcher error: %s", err)
+		}
+	}()
+	
 	return nil
 }
 
@@ -56,7 +72,7 @@ func startSMB() error{
 }
 
 
-func stopCanary() error{
+func stopCanary() error {
 	log.Logger.Info().Msg("[X]\tStopping OpenCanary!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("opencanaryd", "--stop")
@@ -69,7 +85,7 @@ func stopCanary() error{
 	return nil
 }
 
-func startCanary() error{
+func startCanary() error {
 	log.Logger.Info().Msg("[!]\tStarting OpenCanary!")
 	// fmt.Println("[+] Fetching updates!")
 	cmd := exec.Command("opencanaryd", "--start")
@@ -85,7 +101,12 @@ func startCanary() error{
 // Sets the opencanary conf pointer
 func readFromCanaryConfig() error {
 	file, err := os.Open(CanaryConfPath)
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Logger.Error().Msgf("Error closing file: %s", err)
+		}
+	}(file)
 	if err != nil {
 		log.Logger.Warn().Msgf("[X]\tError opening file: %s", err)
 	}

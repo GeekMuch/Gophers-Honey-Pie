@@ -260,7 +260,7 @@ func WriteConfToYAML() {
 	log.Logger.Info().Msgf("[!]\tDevice ID is: %v", Config.DeviceID)
 }
 
-func UpdateConfig(conf model.PiConfResponse) error{
+func UpdateConfig(conf model.PiConfResponse) error {
 	//todo revert to old conf if something fails.
 	//Making backup config
 	//config := Config
