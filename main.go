@@ -46,6 +46,7 @@ func main() {
 	//opencanary.ReadFromToCanaryConfig()
 	//opencanary.WriteToCanaryConfigFile()
 	//opencanary.Start()
+	//Test
 	wg.Wait()
 
 	// api.GetDeviceIDFromAPI()
