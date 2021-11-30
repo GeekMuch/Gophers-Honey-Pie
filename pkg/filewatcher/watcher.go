@@ -22,17 +22,21 @@ func StartNewFileWatcher(logFilepath, offsetFilepath string, logChannel *LogChan
 		return err
 	}
 
+	log.Logger.Info().Msgf("Filewatcher tailing logfile: %s", logFilepath)
+
 	var index uint32 = 0
 	var offset uint32
 
 	// Read offset value from file if it exists. Else set offset to 0.
 	if fileExists(offsetFilepath) {
+		log.Logger.Debug().Msgf("Offset file %s found", offsetFilepath)
 		offset, err = getOffsetFromFile(offsetFilepath)
 		if err != nil {
 			log.Logger.Error().Msgf("Error getting offset from offset file: %s", err)
 			return err
 		}
 	} else {
+		log.Logger.Debug().Msgf("Offset file %s not found. Attempting to create file.", offsetFilepath)
 		offset = 0
 		err = saveOffsetToFile(offsetFilepath, offset)
 		if err != nil {

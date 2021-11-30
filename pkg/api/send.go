@@ -45,4 +45,5 @@ func SendLog(standardLog model.Log) {
 		log.Logger.Error().Msgf("[X]\tError closing response body.\n[ERROR] -  \n", err)
 	}
 
+	log.Logger.Debug().Msgf("Log successfully sent!")
 }
