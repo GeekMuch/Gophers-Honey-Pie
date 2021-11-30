@@ -34,7 +34,7 @@ func ParseOpenCanaryLog(jsonLog string) (model.Log, error) {
 
 	err := json.Unmarshal([]byte(jsonLog), &opencanaryLog)
 	if err != nil {
-		log.Logger.Warn().Msgf("Error unmarshalling JSON: %s", err)
+		log.Logger.Warn().Msgf("Error unmarshalling log JSON: %s", err)
 		return model.Log{}, err
 	}
 
