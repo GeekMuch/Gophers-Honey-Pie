@@ -73,6 +73,7 @@ func ParseOpenCanaryLog(jsonLog string) (model.Log, error) {
 	standardLog.LogTimeStamp = parsedLogTime
 	standardLog.Message = string(logdataMarshalled)
 	// Get severity level of log type.
+	log.Logger.Debug().Msgf("Logtype: %d", opencanaryLog.LogType)
 	standardLog.Level, err = getOpenCanaryLogLevel(opencanaryLog.LogType)
 	if err != nil {
 		log.Logger.Warn().Msgf("Error getting severity level: %s", err)
