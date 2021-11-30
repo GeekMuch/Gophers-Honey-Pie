@@ -3,11 +3,11 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
-	"net/http"
-
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
+	"io"
+	"net/http"
 )
 
 /*
@@ -52,11 +52,18 @@ func RegisterDevice() {
 	var deviceId struct {
 		Id uint32 `json:"device_id"`
 	}
-	if err := decoder.Decode(&deviceId); err != nil {
+	if err = decoder.Decode(&deviceId); err != nil {
 		log.Logger.Error().Msgf("[X]\tError in decode.\n[ERROR] -  \n", err)
 	}
 	log.Logger.Info().Msgf("[+]\tNew DeviceID Added-> %v", deviceId.Id)
-	defer resp.Body.Close()
+
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+			log.Logger.Error().Msgf("[X]\tError closing body: %s", err)
+		}
+	}(resp.Body)
+
 	conf := model.PiConfResponse{
 		Status:    "",
 		DeviceId:  deviceId.Id,

@@ -3,13 +3,10 @@ package main
 import (
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
+	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/daemon"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots"
-	"sync"
-
-	//"github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots/opencanary"
-
-	// "github.com/GeekMuch/Gophers-Honey-Pie/pkg/helper"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
+	"sync"
 )
 
 /*
@@ -33,23 +30,17 @@ func main() {
 
 	wg.Add(1)
 	go func() {
-		api.GetConfFromBackend()
-		log.Logger.Info().Msgf("GetConfFromBackend goroutine done")
+		daemon.UpdateDevice()
+		log.Logger.Info().Msgf("UpdateDevice goroutine done")
 		wg.Done()
 	}()
+
 	wg.Add(1)
 	go func() {
-		api.Heartbeat()
+		daemon.Heartbeat()
 		log.Logger.Info().Msgf("Heartbeat goroutine done")
 		wg.Done()
 	}()
-	//opencanary.ReadFromToCanaryConfig()
-	//opencanary.WriteToCanaryConfigFile()
-	//opencanary.Start()
-	//Test
-	wg.Wait()
 
-	// api.GetDeviceIDFromAPI()
-	// config.AddDeviceIDtoYAML()
-	// config.StartSetupSequence()
+	wg.Wait()
 }

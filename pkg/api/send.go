@@ -25,7 +25,7 @@ func SendLog(standardLog model.Log) {
 
 	request, err := http.NewRequest("POST", apiURL, requestBody)
 	if err != nil {
-		log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] -  \n", err)
+		log.Logger.Info().Msgf("[!]\tError on request.\n[ERROR] -  \n", err)
 	}
 
 	request.Header.Add("Authorization", bearer)
