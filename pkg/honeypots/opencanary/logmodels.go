@@ -86,6 +86,6 @@ type OpenCanaryLog struct {
 	SrcPort json.Number       `json:"src_port"`
 	UTCTime string            `json:"utc_time"`
 	Logdata OpenCanaryLogData `json:"logdata"`
-	LogType int               `json:"log_type"`
+	LogType int               `json:"logtype"`
 	NodeID  string            `json:"node_id"`
 }
