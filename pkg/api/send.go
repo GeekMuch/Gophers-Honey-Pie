@@ -37,6 +37,7 @@ func SendLog(standardLog model.Log) {
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 		log.Logger.Debug().Msgf("Attempting to resend log")
+		time.Sleep(time.Second * 1)
 		SendLog(standardLog)
 	}
 
