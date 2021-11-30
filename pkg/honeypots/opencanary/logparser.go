@@ -57,16 +57,18 @@ func ParseOpenCanaryLog(jsonLog string) (model.Log, error) {
 	standardLog.DeviceID = config.Config.DeviceID
 	standardLog.LogID = 0 // LogID is set by the backend.
 	standardLog.DstHost = opencanaryLog.DstHost
-	if opencanaryLog.DstPort < 0 {
+	if dstPort, _ := opencanaryLog.DstPort.Int64(); dstPort < 0 {
 		standardLog.DstPort = 0
 	} else {
-		standardLog.DstPort = uint16(opencanaryLog.DstPort)
+		dstPort, _ = opencanaryLog.DstPort.Int64()
+		standardLog.DstPort = uint16(dstPort)
 	}
 	standardLog.SrcHost = opencanaryLog.SrcHost
-	if opencanaryLog.SrcPort < 0 {
+	if srcPort, _ := opencanaryLog.SrcPort.Int64(); srcPort < 0 {
 		standardLog.SrcPort = 0
 	} else {
-		standardLog.SrcPort = uint16(opencanaryLog.SrcPort)
+		srcPort, _ = opencanaryLog.SrcPort.Int64()
+		standardLog.SrcPort = uint16(srcPort)
 	}
 	standardLog.LogTimeStamp = parsedLogTime
 	standardLog.Message = string(logdataMarshalled)

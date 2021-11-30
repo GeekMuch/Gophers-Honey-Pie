@@ -1,5 +1,7 @@
 package opencanary
 
+import "encoding/json"
+
 // Logs severity levels.
 var (
 	CRITICAL      = 0
@@ -79,9 +81,9 @@ type OpenCanaryLogDataMsg struct {
 
 type OpenCanaryLog struct {
 	DstHost string            `json:"dst_host"`
-	DstPort int32             `json:"dst_port"`
+	DstPort json.Number       `json:"dst_port"`
 	SrcHost string            `json:"src_host"`
-	SrcPort int32             `json:"src_port"`
+	SrcPort json.Number       `json:"src_port"`
 	UTCTime string            `json:"utc_time"`
 	Logdata OpenCanaryLogData `json:"logdata"`
 	LogType int               `json:"log_type"`
