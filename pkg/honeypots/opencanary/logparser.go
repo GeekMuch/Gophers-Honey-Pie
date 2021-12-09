@@ -2,12 +2,13 @@ package opencanary
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/filewatcher"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
-	"time"
 )
 
 // startChannelListener is used to listen on the given log channel and
@@ -21,7 +22,12 @@ func startChannelListener(logChannel *filewatcher.LogChannel) {
 				log.Logger.Error().Msgf("Error parsing log: %s", err)
 				logChannel.Logs <- msg // TODO: possible stuck logs?
 			}
-			api.SendLog(canaryLog)
+			err = api.SendLog(canaryLog)
+			if err != nil {
+				for err != nil {
+					err = api.SendLog(canaryLog)
+				}
+			}
 		}
 	}
 }

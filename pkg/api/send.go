@@ -4,19 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
-	"net/http"
-	"time"
 )
 
-func SendLog(standardLog model.Log) {
+func SendLog(standardLog model.Log) error {
 	var bearer = config.AuthenticationToken()
 
 	jsonMarshalledLog, err := json.Marshal(standardLog)
 	if err != nil {
 		log.Logger.Error().Msgf("Error marshalling JSON: %s", err)
+		return err
 	}
 
 	requestBody := bytes.NewReader(jsonMarshalledLog)
@@ -26,6 +28,7 @@ func SendLog(standardLog model.Log) {
 	request, err := http.NewRequest("POST", apiURL, requestBody)
 	if err != nil {
 		log.Logger.Info().Msgf("[!]\tError on request.\n[ERROR] -  \n", err)
+		return err
 	}
 
 	request.Header.Add("Authorization", bearer)
@@ -37,8 +40,7 @@ func SendLog(standardLog model.Log) {
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
 		log.Logger.Debug().Msgf("Attempting to resend log")
-		time.Sleep(time.Second * 1)
-		SendLog(standardLog)
+		return err
 	}
 
 	err = response.Body.Close()
@@ -47,4 +49,5 @@ func SendLog(standardLog model.Log) {
 	}
 
 	log.Logger.Debug().Msgf("Log successfully sent!")
+	return nil
 }
