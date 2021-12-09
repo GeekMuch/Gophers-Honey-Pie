@@ -3,11 +3,12 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
-	"net/http"
-	"time"
 )
 
 func GetConfFromBackend() model.PiConfResponse {
@@ -63,11 +64,12 @@ func GetConfFromBackend() model.PiConfResponse {
 	return respStruct
 }
 
-func SendHeartbeat() {
+func SendHeartbeat() error {
 	var bearer = config.AuthenticationToken()
 
 	sendStruct := &model.Heartbeat{
 		DeviceID: config.Config.DeviceID,
+		IpStr:    config.Config.IpStr,
 	}
 
 	postBody, _ := json.Marshal(sendStruct)
@@ -77,7 +79,7 @@ func SendHeartbeat() {
 	req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
-		time.Sleep(time.Second * 5)
+		return err
 	}
 
 	req.Header.Add("Authorization", bearer)
@@ -88,14 +90,16 @@ func SendHeartbeat() {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
-		time.Sleep(time.Second * 5)
+		return err
 	}
 
 	err = resp.Body.Close()
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in heartbeat response body.\n[ERROR] -  \n", err)
+		return err
 	}
 
 	time.Sleep(time.Second * 30)
 	log.Logger.Info().Msgf("[*]\tHeartbeat ->  DeviceID: %v \n", sendStruct.DeviceID)
+	return nil
 }

@@ -3,8 +3,7 @@ module github.com/GeekMuch/Gophers-Honey-Pie
 go 1.16
 
 require (
-	github.com/Mikkelhost/Gophers-Honey v0.0.1
-	github.com/Mikkelhost/Gophers-Honey v0.0.1
+	github.com/Mikkelhost/Gophers-Honey v0.0.2
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/hpcloud/tail v1.0.0
 	github.com/rs/zerolog v1.26.0
