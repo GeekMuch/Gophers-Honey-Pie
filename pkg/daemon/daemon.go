@@ -1,11 +1,12 @@
 package daemon
 
 import (
+	"time"
+
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/api"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/honeypots"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
-	"time"
 )
 
 func UpdateDevice() {
@@ -51,6 +52,9 @@ func UpdateDevice() {
 
 func Heartbeat() {
 	for {
-		api.SendHeartbeat()
+		err := api.SendHeartbeat()
+		if err != nil {
+			log.Logger.Warn().Msgf("Error sending heartbeat: %s", err)
+		}
 	}
 }
