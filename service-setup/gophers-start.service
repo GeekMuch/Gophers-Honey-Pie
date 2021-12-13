@@ -1,6 +1,7 @@
 [Unit]
 Description=Starts setupup in GO
-After=multi-user.target
+After=network-online.target
+Wants=network-online.target
  
 [Service]
 User=root
