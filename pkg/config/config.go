@@ -55,8 +55,9 @@ func readConfigFile() {
 		log.Logger.Error().Msgf("[X]\tError in unmarshal YAML - ", err2)
 	}
 
-	log.Logger.Info().Msgf("[*]\tSettings: \n\t\tC2:\t\t%v \n\t\tIPStr:\t\t%v \n\t\tHostname:\t%v \n\t\tNIC Vendor:\t%v \n\t\tMAC:\t%v \n\t\tConfigured:\t%v \n\t\tPort:\t\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
+	log.Logger.Info().Msgf("[*]\tSettings: \n\t\tC2:\t\t%v \n\t\tC2 Protocol:\t\t%v \n\t\tIPStr:\t\t%v \n\t\tHostname:\t%v \n\t\tNIC Vendor:\t%v \n\t\tMAC:\t%v \n\t\tConfigured:\t%v \n\t\tPort:\t\t%v \n\t\tDeviceID:\t%v \n\t\tDeviceKey:\t%v",
 		conf.C2,
+		conf.C2Protocol,
 		conf.IpStr,
 		conf.Hostname,
 		conf.NICVendor,

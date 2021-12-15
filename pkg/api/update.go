@@ -26,7 +26,7 @@ func GetConfFromBackend() model.PiConfResponse {
 
 	log.Logger.Info().Msg("Creating http request for getDeviceConf")
 	// Create a new request using http
-	req, err := http.NewRequest("GET", "http://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
+	req, err := http.NewRequest("GET", config.Config.C2Protocol+"://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
 	if err != nil {
 		log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] -  \n", err)
 		time.Sleep(time.Second * 5)
@@ -76,7 +76,7 @@ func SendHeartbeat() error {
 
 	responseBody := bytes.NewBuffer(postBody)
 
-	req, err := http.NewRequest("POST", "http://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
+	req, err := http.NewRequest("POST", config.Config.C2Protocol+"://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
 		return err
