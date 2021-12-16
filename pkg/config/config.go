@@ -289,7 +289,7 @@ func UpdateConfig(conf model.PiConfResponse) error {
 			log.Logger.Warn().Msgf("[X]\tError, no change in NIC Vendor: %s")
 			return nil
 		}
-		if err := ChangeNICVendor(macAddress, "wlan0"); err != nil {
+		if err := ChangeNICVendor(macAddress, "eth0"); err != nil {
 			log.Logger.Warn().Msgf("[X]\tError Changing NIC Vendor: %s", err)
 			return err
 		}
