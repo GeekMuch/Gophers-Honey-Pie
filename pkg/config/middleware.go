@@ -21,7 +21,7 @@ func CheckForC2Server(C2 string) {
 	}
 	log.Logger.Info().Msg("[*]\tChecking if C2 is Alive ")
 
-	timeout := 1 * time.Second
+	timeout := 10 * time.Second
 
 	host := fmt.Sprintf("%s:%d", C2Host, C2Port)
 	conn, err := net.DialTimeout("tcp", host, timeout)

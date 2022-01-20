@@ -37,7 +37,7 @@ func SendLog(standardLog model.Log) error {
 	request.Header.Add("Authorization", bearer)
 
 	client := http.Client{
-		Timeout: time.Second * 3,
+		Timeout: time.Second * 10,
 	}
 	response, err := client.Do(request)
 	if err != nil {
