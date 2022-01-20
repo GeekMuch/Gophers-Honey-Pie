@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -25,8 +26,13 @@ func GetConfFromBackend() model.PiConfResponse {
 	responseBody := bytes.NewBuffer(postBody)
 
 	log.Logger.Info().Msg("Creating http request for getDeviceConf")
+
+	C2Host := config.Config.C2
+	C2Protocol := config.Config.C2Protocol
+	C2Port := config.Config.Port
+	apiUrl := fmt.Sprintf("%s://%s:%d/api/devices/getDeviceConf", C2Protocol, C2Host, C2Port)
 	// Create a new request using http
-	req, err := http.NewRequest("GET", config.Config.C2Protocol+"://"+config.Config.C2+":8000/api/devices/getDeviceConf", responseBody)
+	req, err := http.NewRequest("GET", apiUrl, responseBody)
 	if err != nil {
 		log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] -  \n", err)
 		time.Sleep(time.Second * 5)
@@ -76,7 +82,12 @@ func SendHeartbeat() error {
 
 	responseBody := bytes.NewBuffer(postBody)
 
-	req, err := http.NewRequest("POST", config.Config.C2Protocol+"://"+config.Config.C2+":8000/api/devices/heartbeat", responseBody)
+	C2Host := config.Config.C2
+	C2Protocol := config.Config.C2Protocol
+	C2Port := config.Config.Port
+	apiUrl := fmt.Sprintf("%s://%s:%d/api/devices/heartbeat", C2Protocol, C2Host, C2Port)
+
+	req, err := http.NewRequest("POST", apiUrl, responseBody)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError in http request.\n[ERROR] -  \n", err)
 		return err

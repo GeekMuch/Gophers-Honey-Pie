@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/GeekMuch/Gophers-Honey-Pie/pkg/config"
 	log "github.com/GeekMuch/Gophers-Honey-Pie/pkg/logger"
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
@@ -15,7 +16,9 @@ import (
 */
 func getAddDeviceURL() string {
 	C2Host := config.Config.C2
-	url := config.Config.C2Protocol+"://" + C2Host + ":8000/api/devices/addDevice"
+	C2Protocol := config.Config.C2Protocol
+	C2Port := config.Config.Port
+	url := fmt.Sprintf("%s://%s:%d/api/devices/addDevice", C2Protocol, C2Host, C2Port)
 	log.Logger.Info().Msg(url)
 	return url
 }
