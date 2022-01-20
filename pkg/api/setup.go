@@ -9,6 +9,7 @@ import (
 	"github.com/Mikkelhost/Gophers-Honey/pkg/model"
 	"io"
 	"net/http"
+	"time"
 )
 
 /*
@@ -45,7 +46,12 @@ func RegisterDevice() {
 	req.Header.Add("Authorization", config.AuthenticationToken())
 
 	// Send req using http Client
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] - %s \n", err)

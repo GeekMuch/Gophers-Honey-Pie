@@ -38,6 +38,9 @@ func SendLog(standardLog model.Log) error {
 
 	client := http.Client{
 		Timeout: time.Second * 10,
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+		},
 	}
 	response, err := client.Do(request)
 	if err != nil {
