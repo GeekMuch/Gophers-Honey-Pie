@@ -38,7 +38,7 @@ func RegisterDevice() {
 	// Create a new request using http
 	req, err := http.NewRequest("POST", getAddDeviceURL(), responseBody)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] - %s \n", err)
 
 	}
 	// add authorization header to the req
@@ -48,7 +48,7 @@ func RegisterDevice() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] - %s \n", err)
 	}
 	// responseConfig := config.Config
 	decoder := json.NewDecoder(resp.Body)

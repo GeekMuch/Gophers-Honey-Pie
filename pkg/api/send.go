@@ -30,7 +30,7 @@ func SendLog(standardLog model.Log) error {
 
 	request, err := http.NewRequest("POST", apiURL, requestBody)
 	if err != nil {
-		log.Logger.Info().Msgf("[!]\tError on request.\n[ERROR] -  \n", err)
+		log.Logger.Info().Msgf("[!]\tError on request.\n[ERROR] - %s \n", err)
 		return err
 	}
 
@@ -41,7 +41,7 @@ func SendLog(standardLog model.Log) error {
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] - %s \n", err)
 		log.Logger.Debug().Msgf("Attempting to resend log")
 		return err
 	}

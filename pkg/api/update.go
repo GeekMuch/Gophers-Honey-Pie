@@ -34,7 +34,7 @@ func GetConfFromBackend() model.PiConfResponse {
 	// Create a new request using http
 	req, err := http.NewRequest("GET", apiUrl, responseBody)
 	if err != nil {
-		log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] -  \n", err)
+		log.Logger.Info().Msgf("[X]\tError on request.\n[ERROR] - %s \n", err)
 		time.Sleep(time.Second * 5)
 	}
 	// add authorization header to the req
@@ -48,7 +48,7 @@ func GetConfFromBackend() model.PiConfResponse {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  %s \n", err)
 		time.Sleep(time.Second * 5)
 		return GetConfFromBackend()
 	}
@@ -100,7 +100,7 @@ func SendHeartbeat() error {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] -  \n", err)
+		log.Logger.Error().Msgf("[X]\tError on response.\n[ERROR] - %s \n", err)
 		return err
 	}
 
