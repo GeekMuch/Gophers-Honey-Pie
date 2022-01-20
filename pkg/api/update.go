@@ -45,6 +45,9 @@ func GetConfFromBackend() model.PiConfResponse {
 	log.Logger.Info().Msg("Sending http request")
 	client := &http.Client{
 		Timeout: time.Second * 10,
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+		},
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -97,6 +100,9 @@ func SendHeartbeat() error {
 	// Send req using http Client
 	client := &http.Client{
 		Timeout: time.Second * 10,
+		Transport: &http.Transport{
+			DisableKeepAlives: true,
+		},
 	}
 	resp, err := client.Do(req)
 	if err != nil {
