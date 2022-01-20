@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"os/exec"
@@ -12,6 +13,7 @@ import (
 func CheckForC2Server(C2 string) {
 
 	C2Host := C2
+	C2Port := Config.Port
 	if !(len(C2Host) > 0) {
 		log.Logger.Error().Msgf("[X]\tSite unreachable, no C2 set \n")
 		log.Logger.Fatal()
@@ -20,7 +22,9 @@ func CheckForC2Server(C2 string) {
 	log.Logger.Info().Msg("[*]\tChecking if C2 is Alive ")
 
 	timeout := 1 * time.Second
-	conn, err := net.DialTimeout("tcp", C2Host+":8000", timeout)
+
+	host := fmt.Sprintf("%s:%d", C2Host, C2Port)
+	conn, err := net.DialTimeout("tcp", host, timeout)
 	if err != nil {
 		log.Logger.Error().Msgf("[X]\tC2 is unreachable, [ERROR] -  \n", err)
 		log.Logger.Fatal()

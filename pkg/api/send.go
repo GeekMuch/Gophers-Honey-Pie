@@ -23,7 +23,10 @@ func SendLog(standardLog model.Log) error {
 
 	requestBody := bytes.NewReader(jsonMarshalledLog)
 
-	var apiURL = fmt.Sprintf("%s://%s:8000/api/logs/addLog", config.Config.C2Protocol, config.Config.C2)
+	C2Host := config.Config.C2
+	C2Protocol := config.Config.C2Protocol
+	C2Port := config.Config.Port
+	var apiURL = fmt.Sprintf("%s://%s:%d/api/logs/addLog", C2Protocol, C2Host, C2Port)
 
 	request, err := http.NewRequest("POST", apiURL, requestBody)
 	if err != nil {
